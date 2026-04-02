@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send a Tribute - Olakiitan at 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{royal:{DEFAULT:'#4B1D6E',light:'#6B3FA0',dark:'#2D1048'},orchid:'#9A5EC7',gold:{DEFAULT:'#C9A84C',light:'#E8D49B',glow:'#F5E6C8'},berry:{DEFAULT:'#7A1B3E',light:'#A62256'},rose:'#D4708F',blush:{DEFAULT:'#F5D5E0',light:'#FDE8EF'},ivory:'#FFF8F0',cream:'#FFFDF7',txt:{dark:'#1A0A2E',body:'#3D2955',muted:'#8E7BA7'}},fontFamily:{display:['Playfair Display','serif'],body:['DM Sans','sans-serif'],script:['Great Vibes','cursive']},borderRadius:{card:'16px',pill:'100px'},boxShadow:{card:'0 4px 24px rgba(75,29,110,0.10)',glow:'0 0 30px rgba(201,168,76,0.25)',lift:'0 8px 32px rgba(75,29,110,0.18)'}}}}
+  </script>
+  <style>
+    body{font-family:'DM Sans',sans-serif}.font-display{font-family:'Playfair Display',serif}.font-script{font-family:'Great Vibes',cursive}
+    .gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+    .gradient-hero{background:linear-gradient(135deg,#2D1048 0%,#4B1D6E 40%,#7A1B3E 100%)}
+    .glass-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.12)}
+    .tab-active{background:#4B1D6E;color:#fff}.tab-inactive{color:#8E7BA7}
+    .tab-inactive:hover{color:#4B1D6E;background:rgba(75,29,110,0.05)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-fade-up{animation:fadeUp .8s ease-out both}
+    .wish-panel{display:none}.wish-panel.active{display:block}
+  </style>
+</head>
+<body class="bg-ivory text-txt-body">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 gradient-hero/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="home.html" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="home.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Home</a>
+        <a href="gallery.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Gallery</a>
+        <a href="tributes-wall.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Tributes</a>
+        <a href="submit-wish.html" class="bg-gold text-royal-dark font-semibold px-5 py-2 rounded-pill text-sm">Send a Tribute</a>
+      </div>
+      <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 pb-4">
+      <a href="home.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Home</a>
+      <a href="upload-video.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Upload Video</a>
+      <a href="submit-wish.html" class="block py-3 text-gold font-medium border-b border-white/10">Send a Tribute</a>
+      <a href="gallery.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Gallery</a>
+      <a href="tributes-wall.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Tributes Wall</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <section class="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
+    <p class="text-gold-light uppercase tracking-[0.2em] text-xs font-semibold mb-3">Choose Your Tribute Style</p>
+    <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-3">Send a Birthday Tribute</h1>
+    <p class="text-white/60 max-w-md mx-auto">Pick the format that suits you best: a written note, a photo with a caption, or a short video message.</p>
+    <div class="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0"/></svg></div>
+  </section>
+
+  <!-- TRIBUTE FORM SECTION -->
+  <section class="py-12 md:py-20 px-4">
+    <div class="max-w-xl mx-auto">
+
+      <!-- Tab Switcher -->
+      <div class="flex bg-white rounded-pill shadow-card p-1.5 mb-8">
+        <button onclick="switchTab('text')" id="tab-text" class="tab-active flex-1 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+          Text
+        </button>
+        <button onclick="switchTab('photo')" id="tab-photo" class="tab-inactive flex-1 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>
+          Photo
+        </button>
+        <button onclick="switchTab('video')" id="tab-video" class="tab-inactive flex-1 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          Video
+        </button>
+      </div>
+
+      <!-- TEXT TRIBUTE FORM -->
+      <div id="panel-text" class="wish-panel active">
+        <div class="bg-white rounded-card shadow-card p-6 md:p-10">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-blush flex items-center justify-center">
+              <svg class="w-5 h-5 text-berry" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+            </div>
+            <div>
+              <h2 class="font-display text-xl font-bold text-txt-dark">Write a Tribute</h2>
+              <p class="text-xs text-txt-muted">Your words will appear on the Tributes Wall</p>
+            </div>
+          </div>
+          <form class="space-y-5">
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Your Name <span class="text-rose">*</span></label>
+              <input type="text" placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Your Message <span class="text-rose">*</span></label>
+              <textarea rows="5" placeholder="Write your heartfelt birthday tribute for Pastor Olakiitan..." class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all resize-none"></textarea>
+              <p class="text-xs text-txt-muted mt-1 text-right">0 / 500 characters</p>
+            </div>
+            <button type="submit" class="w-full bg-gold hover:bg-gold/90 text-royal-dark font-semibold py-4 rounded-pill shadow-glow transition-all duration-300 hover:scale-[1.02]">Send Your Tribute</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- PHOTO TRIBUTE FORM -->
+      <div id="panel-photo" class="wish-panel">
+        <div class="bg-white rounded-card shadow-card p-6 md:p-10">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-gold-glow flex items-center justify-center">
+              <svg class="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>
+            </div>
+            <div>
+              <h2 class="font-display text-xl font-bold text-txt-dark">Share a Photo</h2>
+              <p class="text-xs text-txt-muted">Upload a photo with a short caption</p>
+            </div>
+          </div>
+          <form class="space-y-5">
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Your Name <span class="text-rose">*</span></label>
+              <input type="text" placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Photo <span class="text-rose">*</span></label>
+              <div class="border-2 border-dashed border-gold-light rounded-xl p-8 text-center hover:border-gold transition-colors cursor-pointer bg-gold-glow/10">
+                <svg class="w-10 h-10 text-gold mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                <p class="font-semibold text-txt-dark mb-1">Click or tap to select a photo</p>
+                <p class="text-xs text-txt-muted">JPG, PNG, or WebP up to 10MB</p>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Caption <span class="text-txt-muted font-normal">(optional)</span></label>
+              <input type="text" placeholder="Describe this memory..." class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all">
+            </div>
+            <button type="submit" class="w-full bg-gold hover:bg-gold/90 text-royal-dark font-semibold py-4 rounded-pill shadow-glow transition-all duration-300 hover:scale-[1.02]">Upload Photo</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIDEO TRIBUTE FORM -->
+      <div id="panel-video" class="wish-panel">
+        <div class="bg-white rounded-card shadow-card p-6 md:p-10">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-full bg-blush flex items-center justify-center">
+              <svg class="w-5 h-5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+            </div>
+            <div>
+              <h2 class="font-display text-xl font-bold text-txt-dark">Send a Video</h2>
+              <p class="text-xs text-txt-muted">Record a personal greeting (max 90 seconds)</p>
+            </div>
+          </div>
+          <form class="space-y-5">
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Your Name <span class="text-rose">*</span></label>
+              <input type="text" placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Video <span class="text-rose">*</span></label>
+              <div class="border-2 border-dashed border-gold-light rounded-xl p-8 text-center hover:border-gold transition-colors cursor-pointer bg-gold-glow/10">
+                <svg class="w-10 h-10 text-royal mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+                <p class="font-semibold text-txt-dark mb-1">Click or tap to select a video</p>
+                <p class="text-xs text-txt-muted">MP4 or MOV, max 90 seconds, up to 100MB</p>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-txt-dark mb-2">Caption <span class="text-txt-muted font-normal">(optional)</span></label>
+              <input type="text" placeholder="A short note about your video..." class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all">
+            </div>
+            <div class="flex items-start gap-3 bg-blush-light rounded-xl p-4">
+              <svg class="w-5 h-5 text-berry mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <p class="text-sm text-txt-body">Maximum <strong>1 minute 30 seconds</strong>. Videos exceeding the limit will not be accepted.</p>
+            </div>
+            <button type="submit" class="w-full bg-gold hover:bg-gold/90 text-royal-dark font-semibold py-4 rounded-pill shadow-glow transition-all duration-300 hover:scale-[1.02]">Upload Video</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Encouragement Panel -->
+      <div class="mt-8 text-center p-6 bg-gradient-to-br from-blush-light/50 to-ivory rounded-card border border-gold-light/30">
+        <p class="font-script text-gold text-xl mb-2">Every message matters</p>
+        <p class="text-txt-muted text-sm">Whether it is two sentences or a full minute, your words of love will become part of a lasting digital keepsake for Pastor Olakiitan.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-royal-dark py-10 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="font-script text-gold text-2xl mb-3">Pastor Olakiitan Olaleye @ 50</p>
+      <div class="flex justify-center gap-6 mb-6 flex-wrap">
+        <a href="home.html" class="text-white/50 hover:text-gold text-sm transition-colors">Home</a>
+        <a href="gallery.html" class="text-white/50 hover:text-gold text-sm transition-colors">Gallery</a>
+        <a href="tributes-wall.html" class="text-white/50 hover:text-gold text-sm transition-colors">Tributes</a>
+      </div>
+      <div class="gold-divider max-w-xs mx-auto mb-6"></div>
+      <p class="text-white/30 text-xs">Made with love for Pastor Olakiitan Olaleye's 50th birthday</p>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.wish-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('[id^="tab-"]').forEach(t => { t.className = t.className.replace('tab-active', 'tab-inactive'); });
+      document.getElementById('panel-' + tab).classList.add('active');
+      const btn = document.getElementById('tab-' + tab);
+      btn.className = btn.className.replace('tab-inactive', 'tab-active');
+    }
+  </script>
+</body>
+</html>

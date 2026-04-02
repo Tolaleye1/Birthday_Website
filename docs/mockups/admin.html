@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Olakiitan at 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{royal:{DEFAULT:'#4B1D6E',light:'#6B3FA0',dark:'#2D1048'},orchid:'#9A5EC7',gold:{DEFAULT:'#C9A84C',light:'#E8D49B',glow:'#F5E6C8'},berry:{DEFAULT:'#7A1B3E',light:'#A62256'},rose:'#D4708F',blush:{DEFAULT:'#F5D5E0',light:'#FDE8EF'},ivory:'#FFF8F0',cream:'#FFFDF7',txt:{dark:'#1A0A2E',body:'#3D2955',muted:'#8E7BA7'}},fontFamily:{display:['Playfair Display','serif'],body:['DM Sans','sans-serif'],script:['Great Vibes','cursive']},borderRadius:{card:'16px',pill:'100px'},boxShadow:{card:'0 4px 24px rgba(75,29,110,0.10)',glow:'0 0 30px rgba(201,168,76,0.25)',lift:'0 8px 32px rgba(75,29,110,0.18)'}}}}
+  </script>
+  <style>
+    body{font-family:'DM Sans',sans-serif}.font-display{font-family:'Playfair Display',serif}.font-script{font-family:'Great Vibes',cursive}
+    .gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+    .gradient-hero{background:linear-gradient(135deg,#2D1048 0%,#4B1D6E 40%,#7A1B3E 100%)}
+    .filter-active{background:#4B1D6E;color:#fff}.filter-inactive{background:white;color:#3D2955;border:1px solid #E8D49B}
+    .filter-inactive:hover{border-color:#4B1D6E;color:#4B1D6E}
+  </style>
+</head>
+<body class="bg-gray-50 text-txt-body">
+
+  <!-- ADMIN NAV -->
+  <nav class="gradient-hero border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="home.html" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+        <span class="hidden sm:inline-block bg-gold/20 text-gold text-xs font-semibold px-3 py-1 rounded-full">Admin</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="home.html" class="text-white/60 hover:text-gold text-sm transition-colors hidden sm:inline">View Site</a>
+        <button class="text-white/60 hover:text-white text-sm font-medium flex items-center gap-1.5 transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Dashboard Header -->
+    <div class="mb-8">
+      <h1 class="font-display text-2xl md:text-3xl font-bold text-txt-dark mb-1">Dashboard</h1>
+      <p class="text-txt-muted text-sm">Manage all birthday submissions in one place</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-card shadow-card p-5 border-l-4 border-gold">
+        <p class="text-xs text-txt-muted font-medium uppercase tracking-wider">Total Submissions</p>
+        <p class="font-display text-3xl font-bold text-txt-dark mt-1">173</p>
+        <p class="text-xs text-emerald-600 mt-1 font-medium">+8 today</p>
+      </div>
+      <div class="bg-white rounded-card shadow-card p-5 border-l-4 border-berry">
+        <p class="text-xs text-txt-muted font-medium uppercase tracking-wider">Text Tributes</p>
+        <p class="font-display text-3xl font-bold text-txt-dark mt-1">98</p>
+        <p class="text-xs text-txt-muted mt-1">56.6% of total</p>
+      </div>
+      <div class="bg-white rounded-card shadow-card p-5 border-l-4 border-royal">
+        <p class="text-xs text-txt-muted font-medium uppercase tracking-wider">Videos</p>
+        <p class="font-display text-3xl font-bold text-txt-dark mt-1">32</p>
+        <p class="text-xs text-txt-muted mt-1">18.5% of total</p>
+      </div>
+      <div class="bg-white rounded-card shadow-card p-5 border-l-4 border-orchid">
+        <p class="text-xs text-txt-muted font-medium uppercase tracking-wider">Photos</p>
+        <p class="font-display text-3xl font-bold text-txt-dark mt-1">43</p>
+        <p class="text-xs text-txt-muted mt-1">24.9% of total</p>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <span class="text-sm font-semibold text-txt-dark mr-1">Filter:</span>
+      <button class="filter-active px-4 py-2 rounded-pill text-sm font-medium transition-all">All</button>
+      <button class="filter-inactive px-4 py-2 rounded-pill text-sm font-medium transition-all">Text</button>
+      <button class="filter-inactive px-4 py-2 rounded-pill text-sm font-medium transition-all">Photo</button>
+      <button class="filter-inactive px-4 py-2 rounded-pill text-sm font-medium transition-all">Video</button>
+      <div class="ml-auto">
+        <input type="text" placeholder="Search by name..." class="px-4 py-2 rounded-xl border border-gray-200 text-sm text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all w-48">
+      </div>
+    </div>
+
+    <!-- Submission List -->
+    <div class="bg-white rounded-card shadow-card overflow-hidden">
+
+      <!-- Table Header (desktop) -->
+      <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-ivory border-b border-gray-100 text-xs font-semibold text-txt-muted uppercase tracking-wider">
+        <div class="col-span-3">Submitter</div>
+        <div class="col-span-1">Type</div>
+        <div class="col-span-4">Content</div>
+        <div class="col-span-2">Date</div>
+        <div class="col-span-2 text-right">Actions</div>
+      </div>
+
+      <!-- Row 1: Text -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 border-b border-gray-50 hover:bg-ivory/50 transition-colors items-center">
+        <div class="md:col-span-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-royal flex items-center justify-center text-white font-bold text-xs">FA</div>
+          <span class="font-semibold text-txt-dark text-sm">Funke Adeyemi</span>
+        </div>
+        <div class="md:col-span-1"><span class="bg-blush text-berry px-2.5 py-0.5 rounded-full text-xs font-semibold">Text</span></div>
+        <div class="md:col-span-4 text-sm text-txt-muted truncate">"Dear Pastor Olakiitan, you have been more than a spiritual leader..."</div>
+        <div class="md:col-span-2 text-sm text-txt-muted">Apr 20, 2026</div>
+        <div class="md:col-span-2 flex justify-end gap-2">
+          <button class="text-txt-muted hover:text-royal transition-colors p-1.5 rounded-lg hover:bg-royal/5" title="View">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </button>
+          <button class="text-txt-muted hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-red-50" title="Delete">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Row 2: Video -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 border-b border-gray-50 hover:bg-ivory/50 transition-colors items-center">
+        <div class="md:col-span-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-berry flex items-center justify-center text-white font-bold text-xs">DT</div>
+          <span class="font-semibold text-txt-dark text-sm">Deacon Tunde</span>
+        </div>
+        <div class="md:col-span-1"><span class="bg-gold/20 text-gold border border-gold/30 px-2.5 py-0.5 rounded-full text-xs font-semibold">Video</span></div>
+        <div class="md:col-span-4 text-sm text-txt-muted truncate flex items-center gap-2">
+          <svg class="w-4 h-4 text-royal flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          video_greeting.mp4 (1:24)
+        </div>
+        <div class="md:col-span-2 text-sm text-txt-muted">Apr 19, 2026</div>
+        <div class="md:col-span-2 flex justify-end gap-2">
+          <button class="text-txt-muted hover:text-royal transition-colors p-1.5 rounded-lg hover:bg-royal/5" title="View"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+          <button class="text-txt-muted hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-red-50" title="Delete"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Row 3: Photo -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 border-b border-gray-50 hover:bg-ivory/50 transition-colors items-center">
+        <div class="md:col-span-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gold flex items-center justify-center text-royal-dark font-bold text-xs">SB</div>
+          <span class="font-semibold text-txt-dark text-sm">Sister Bola</span>
+        </div>
+        <div class="md:col-span-1"><span class="bg-royal/10 text-royal px-2.5 py-0.5 rounded-full text-xs font-semibold">Photo</span></div>
+        <div class="md:col-span-4 text-sm text-txt-muted truncate flex items-center gap-2">
+          <svg class="w-4 h-4 text-gold flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          "Happy birthday from the women's fellowship!"
+        </div>
+        <div class="md:col-span-2 text-sm text-txt-muted">Apr 19, 2026</div>
+        <div class="md:col-span-2 flex justify-end gap-2">
+          <button class="text-txt-muted hover:text-royal transition-colors p-1.5 rounded-lg hover:bg-royal/5" title="View"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+          <button class="text-txt-muted hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-red-50" title="Delete"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Row 4: Text -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 border-b border-gray-50 hover:bg-ivory/50 transition-colors items-center">
+        <div class="md:col-span-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-orchid flex items-center justify-center text-white font-bold text-xs">KO</div>
+          <span class="font-semibold text-txt-dark text-sm">Kunle Ogunbiyi</span>
+        </div>
+        <div class="md:col-span-1"><span class="bg-blush text-berry px-2.5 py-0.5 rounded-full text-xs font-semibold">Text</span></div>
+        <div class="md:col-span-4 text-sm text-txt-muted truncate">"Happy 50th! Praying for more strength, grace, and blessings..."</div>
+        <div class="md:col-span-2 text-sm text-txt-muted">Apr 18, 2026</div>
+        <div class="md:col-span-2 flex justify-end gap-2">
+          <button class="text-txt-muted hover:text-royal transition-colors p-1.5 rounded-lg hover:bg-royal/5" title="View"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+          <button class="text-txt-muted hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-red-50" title="Delete"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Row 5: Video -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-4 hover:bg-ivory/50 transition-colors items-center">
+        <div class="md:col-span-3 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-royal-light flex items-center justify-center text-white font-bold text-xs">AF</div>
+          <span class="font-semibold text-txt-dark text-sm">The Adeoye Family</span>
+        </div>
+        <div class="md:col-span-1"><span class="bg-gold/20 text-gold border border-gold/30 px-2.5 py-0.5 rounded-full text-xs font-semibold">Video</span></div>
+        <div class="md:col-span-4 text-sm text-txt-muted truncate flex items-center gap-2">
+          <svg class="w-4 h-4 text-royal flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          family_greeting.mp4 (1:30)
+        </div>
+        <div class="md:col-span-2 text-sm text-txt-muted">Apr 18, 2026</div>
+        <div class="md:col-span-2 flex justify-end gap-2">
+          <button class="text-txt-muted hover:text-royal transition-colors p-1.5 rounded-lg hover:bg-royal/5" title="View"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></button>
+          <button class="text-txt-muted hover:text-red-600 transition-colors p-1.5 rounded-lg hover:bg-red-50" title="Delete"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-between mt-6">
+      <p class="text-sm text-txt-muted">Showing 1-5 of 173 submissions</p>
+      <div class="flex gap-2">
+        <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-txt-muted hover:border-royal hover:text-royal transition-all">&larr; Prev</button>
+        <button class="px-3 py-1.5 rounded-lg bg-royal text-white text-sm font-semibold">1</button>
+        <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-txt-muted hover:border-royal hover:text-royal transition-all">2</button>
+        <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-txt-muted hover:border-royal hover:text-royal transition-all">3</button>
+        <button class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-txt-muted hover:border-royal hover:text-royal transition-all">Next &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ===== LAITAN'S PHOTOS MANAGEMENT ===== -->
+    <div class="mt-10">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="font-display text-xl md:text-2xl font-bold text-txt-dark">Laitan's Photos</h2>
+          <p class="text-txt-muted text-sm">Manage the curated photo collection shown on the home page and gallery</p>
+        </div>
+        <button class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-5 py-2.5 rounded-pill text-sm transition-all inline-flex items-center gap-2">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          Upload Photo
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Admin photo 1 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden group">
+          <div class="aspect-square bg-gradient-to-br from-blush to-rose flex items-center justify-center relative">
+            <svg class="w-10 h-10 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-lg" title="Delete">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-3">
+            <input type="text" placeholder="Add caption..." value="Wedding day, 2004" class="w-full text-sm text-txt-body border-b border-transparent hover:border-gold-light focus:border-royal focus:outline-none bg-transparent py-1 transition-colors">
+          </div>
+        </div>
+        <!-- Admin photo 2 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden group">
+          <div class="aspect-square bg-gradient-to-br from-gold-glow to-gold-light flex items-center justify-center relative">
+            <svg class="w-10 h-10 text-gold/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-lg" title="Delete">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-3">
+            <input type="text" placeholder="Add caption..." value="Graduation from OAU" class="w-full text-sm text-txt-body border-b border-transparent hover:border-gold-light focus:border-royal focus:outline-none bg-transparent py-1 transition-colors">
+          </div>
+        </div>
+        <!-- Admin photo 3 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden group">
+          <div class="aspect-square bg-gradient-to-br from-orchid/30 to-blush flex items-center justify-center relative">
+            <svg class="w-10 h-10 text-royal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+            <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button class="bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-lg" title="Delete">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="p-3">
+            <input type="text" placeholder="Add caption..." value="Springcare Pharmacy launch" class="w-full text-sm text-txt-body border-b border-transparent hover:border-gold-light focus:border-royal focus:outline-none bg-transparent py-1 transition-colors">
+          </div>
+        </div>
+        <!-- Empty upload slot -->
+        <div class="border-2 border-dashed border-gold-light rounded-card flex flex-col items-center justify-center aspect-square bg-ivory hover:border-gold hover:bg-gold-glow/10 transition-colors cursor-pointer">
+          <svg class="w-10 h-10 text-gold/40 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          <p class="text-sm text-txt-muted font-medium">Add Photo</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200 mt-12 py-6 px-4 text-center">
+    <p class="text-xs text-txt-muted">Admin Dashboard for Pastor Olakiitan Olaleye's 50th Birthday Celebration</p>
+  </footer>
+
+</body>
+</html>

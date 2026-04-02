@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Celebration - Design System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royal: { DEFAULT: '#4B1D6E', light: '#6B3FA0', dark: '#2D1048' },
+            orchid: '#9A5EC7',
+            gold: { DEFAULT: '#C9A84C', light: '#E8D49B', glow: '#F5E6C8' },
+            berry: { DEFAULT: '#7A1B3E', light: '#A62256' },
+            rose: '#D4708F',
+            blush: { DEFAULT: '#F5D5E0', light: '#FDE8EF' },
+            ivory: '#FFF8F0',
+            cream: '#FFFDF7',
+            txt: { dark: '#1A0A2E', body: '#3D2955', muted: '#8E7BA7' }
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body: ['DM Sans', 'sans-serif'],
+            script: ['Great Vibes', 'cursive'],
+          },
+          borderRadius: { card: '16px', pill: '100px' },
+          boxShadow: {
+            card: '0 4px 24px rgba(75, 29, 110, 0.10)',
+            glow: '0 0 30px rgba(201, 168, 76, 0.25)',
+            lift: '0 8px 32px rgba(75, 29, 110, 0.18)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .font-script { font-family: 'Great Vibes', cursive; }
+    .gold-divider { height: 2px; background: linear-gradient(90deg, transparent, #C9A84C, transparent); }
+    .gradient-hero { background: linear-gradient(135deg, #2D1048 0%, #4B1D6E 40%, #7A1B3E 100%); }
+    .gradient-berry { background: linear-gradient(135deg, #7A1B3E 0%, #A62256 100%); }
+    .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .glass-card-light { background: rgba(255, 248, 240, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(201, 168, 76, 0.2); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .animate-fade-up { animation: fadeUp 0.6s ease-out both; }
+    .animate-shimmer { background: linear-gradient(90deg, #C9A84C 0%, #F5E6C8 50%, #C9A84C 100%); background-size: 200% 100%; animation: shimmer 3s infinite; }
+    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(75, 29, 110, 0.18); }
+  </style>
+</head>
+<body class="bg-ivory text-txt-body">
+
+  <!-- Header -->
+  <header class="gradient-hero text-white py-12 px-6 text-center">
+    <p class="font-script text-gold text-3xl mb-2">Celebrating</p>
+    <h1 class="font-display text-4xl md:text-5xl font-bold mb-3">Design System</h1>
+    <p class="text-blush/80 max-w-xl mx-auto">Birthday Celebration Website for Pastor Olakiitan Olaleye. All colours, typography, and components defined here are the visual law for every page mockup and the final build.</p>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-12 space-y-20">
+
+    <!-- ==================== COLORS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Colour Palette</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <!-- Primary -->
+      <h3 class="font-display text-xl font-semibold text-txt-dark mb-4">Primary (Brand Anchors)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <div><div class="h-24 rounded-card bg-royal-dark"></div><p class="mt-2 text-sm font-semibold">Purple Dark<br><span class="text-txt-muted">#2D1048</span></p></div>
+        <div><div class="h-24 rounded-card bg-royal"></div><p class="mt-2 text-sm font-semibold">Royal Purple<br><span class="text-txt-muted">#4B1D6E</span></p></div>
+        <div><div class="h-24 rounded-card bg-royal-light"></div><p class="mt-2 text-sm font-semibold">Purple Mid<br><span class="text-txt-muted">#6B3FA0</span></p></div>
+        <div><div class="h-24 rounded-card bg-orchid"></div><p class="mt-2 text-sm font-semibold">Orchid<br><span class="text-txt-muted">#9A5EC7</span></p></div>
+      </div>
+
+      <!-- Gold -->
+      <h3 class="font-display text-xl font-semibold text-txt-dark mb-4">Ceremonial Gold</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+        <div><div class="h-24 rounded-card bg-gold"></div><p class="mt-2 text-sm font-semibold">Gold<br><span class="text-txt-muted">#C9A84C</span></p></div>
+        <div><div class="h-24 rounded-card bg-gold-light"></div><p class="mt-2 text-sm font-semibold">Gold Light<br><span class="text-txt-muted">#E8D49B</span></p></div>
+        <div><div class="h-24 rounded-card bg-gold-glow"></div><p class="mt-2 text-sm font-semibold">Gold Glow<br><span class="text-txt-muted">#F5E6C8</span></p></div>
+      </div>
+
+      <!-- Warm -->
+      <h3 class="font-display text-xl font-semibold text-txt-dark mb-4">Warm Accents (from UI References)</h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <div><div class="h-24 rounded-card bg-berry"></div><p class="mt-2 text-sm font-semibold">Berry<br><span class="text-txt-muted">#7A1B3E</span></p></div>
+        <div><div class="h-24 rounded-card bg-berry-light"></div><p class="mt-2 text-sm font-semibold">Crimson<br><span class="text-txt-muted">#A62256</span></p></div>
+        <div><div class="h-24 rounded-card bg-rose"></div><p class="mt-2 text-sm font-semibold">Rose<br><span class="text-txt-muted">#D4708F</span></p></div>
+        <div><div class="h-24 rounded-card bg-blush"></div><p class="mt-2 text-sm font-semibold">Blush<br><span class="text-txt-muted">#F5D5E0</span></p></div>
+        <div><div class="h-24 rounded-card bg-blush-light"></div><p class="mt-2 text-sm font-semibold">Pink Mist<br><span class="text-txt-muted">#FDE8EF</span></p></div>
+      </div>
+
+      <!-- Neutrals -->
+      <h3 class="font-display text-xl font-semibold text-txt-dark mb-4">Neutrals</h3>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+        <div><div class="h-24 rounded-card bg-ivory border border-gold-light/40"></div><p class="mt-2 text-sm font-semibold">Ivory<br><span class="text-txt-muted">#FFF8F0</span></p></div>
+        <div><div class="h-24 rounded-card bg-cream border border-gold-light/40"></div><p class="mt-2 text-sm font-semibold">Cream<br><span class="text-txt-muted">#FFFDF7</span></p></div>
+        <div><div class="h-24 rounded-card bg-white border border-gray-200"></div><p class="mt-2 text-sm font-semibold">White<br><span class="text-txt-muted">#FFFFFF</span></p></div>
+        <div><div class="h-24 rounded-card bg-txt-body"></div><p class="mt-2 text-sm font-semibold">Text Body<br><span class="text-txt-muted">#3D2955</span></p></div>
+        <div><div class="h-24 rounded-card bg-txt-dark"></div><p class="mt-2 text-sm font-semibold">Text Dark<br><span class="text-txt-muted">#1A0A2E</span></p></div>
+      </div>
+
+      <!-- Semantic -->
+      <h3 class="font-display text-xl font-semibold text-txt-dark mb-4">Semantic</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div><div class="h-24 rounded-card bg-emerald-600"></div><p class="mt-2 text-sm font-semibold">Success<br><span class="text-txt-muted">#059669</span></p></div>
+        <div><div class="h-24 rounded-card bg-red-600"></div><p class="mt-2 text-sm font-semibold">Error<br><span class="text-txt-muted">#DC2626</span></p></div>
+        <div><div class="h-24 rounded-card bg-amber-500"></div><p class="mt-2 text-sm font-semibold">Warning<br><span class="text-txt-muted">#F59E0B</span></p></div>
+      </div>
+    </section>
+
+    <!-- ==================== TYPOGRAPHY ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Typography</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="space-y-6 mb-10">
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">Display / H1 - Playfair Display 800</p>
+          <h1 class="font-display text-5xl md:text-6xl font-extrabold text-txt-dark">Celebrating 50 Years</h1>
+        </div>
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">H2 - Playfair Display 700</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-txt-dark">A Golden Legacy of Impact</h2>
+        </div>
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">H3 - Playfair Display 600</p>
+          <h3 class="font-display text-2xl font-semibold text-txt-dark">Send Your Birthday Tribute</h3>
+        </div>
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">H4 - DM Sans 700</p>
+          <h4 class="font-body text-xl font-bold text-txt-dark">Upload Guidelines</h4>
+        </div>
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">Body - DM Sans 400</p>
+          <p class="text-base text-txt-body leading-relaxed">Join us in celebrating Pastor Olakiitan Olaleye as she marks 50 years of grace, purpose, and a golden legacy of impact. Share your heartfelt wishes, photos, and video messages.</p>
+        </div>
+        <div class="p-6 bg-white rounded-card shadow-card">
+          <p class="text-xs text-txt-muted mb-1 uppercase tracking-widest">Small / Caption - DM Sans 500</p>
+          <p class="text-sm text-txt-muted">Wednesday, April 22nd, 2026 at 1 PM WAT</p>
+        </div>
+        <div class="p-6 gradient-hero rounded-card shadow-card">
+          <p class="text-xs text-gold-light mb-1 uppercase tracking-widest">Script Accent - Great Vibes</p>
+          <p class="font-script text-gold text-4xl">Pastor Olakiitan Olaleye</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== BUTTONS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Buttons</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="space-y-8">
+        <!-- Primary -->
+        <div>
+          <h3 class="font-display text-lg font-semibold text-txt-dark mb-4">Primary (Gold CTA)</h3>
+          <div class="flex flex-wrap gap-4 items-center">
+            <button class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-8 py-3 rounded-pill shadow-glow transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">Send a Tribute</button>
+            <button class="bg-gold/50 text-royal-dark/50 font-semibold px-8 py-3 rounded-pill cursor-not-allowed">Disabled</button>
+          </div>
+        </div>
+        <!-- Secondary -->
+        <div>
+          <h3 class="font-display text-lg font-semibold text-txt-dark mb-4">Secondary (Royal Purple)</h3>
+          <div class="flex flex-wrap gap-4 items-center">
+            <button class="bg-royal hover:bg-royal-light text-white font-semibold px-8 py-3 rounded-pill shadow-card transition-all duration-300 hover:shadow-lift hover:scale-[1.02]">Upload a Video</button>
+            <button class="bg-royal/50 text-white/50 font-semibold px-8 py-3 rounded-pill cursor-not-allowed">Disabled</button>
+          </div>
+        </div>
+        <!-- Outline -->
+        <div>
+          <h3 class="font-display text-lg font-semibold text-txt-dark mb-4">Outline</h3>
+          <div class="flex flex-wrap gap-4 items-center">
+            <button class="border-2 border-royal text-royal hover:bg-royal hover:text-white font-semibold px-8 py-3 rounded-pill transition-all duration-300">View Gallery</button>
+            <button class="border-2 border-gold text-gold hover:bg-gold hover:text-royal-dark font-semibold px-8 py-3 rounded-pill transition-all duration-300">Read Wishes</button>
+          </div>
+        </div>
+        <!-- Ghost (on dark) -->
+        <div class="gradient-hero p-8 rounded-card">
+          <h3 class="font-display text-lg font-semibold text-white mb-4">Ghost (on dark backgrounds)</h3>
+          <div class="flex flex-wrap gap-4 items-center">
+            <button class="border border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-3 rounded-pill transition-all duration-300">Back</button>
+            <button class="text-gold hover:text-gold-light font-semibold px-6 py-3 transition-colors duration-300 underline underline-offset-4">Learn More</button>
+          </div>
+        </div>
+        <!-- Sizes -->
+        <div>
+          <h3 class="font-display text-lg font-semibold text-txt-dark mb-4">Sizes</h3>
+          <div class="flex flex-wrap gap-4 items-center">
+            <button class="bg-royal text-white font-medium px-4 py-1.5 text-sm rounded-pill transition-all duration-300">Small</button>
+            <button class="bg-royal text-white font-semibold px-8 py-3 rounded-pill transition-all duration-300">Default</button>
+            <button class="bg-royal text-white font-semibold px-10 py-4 text-lg rounded-pill transition-all duration-300">Large</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CARDS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Cards</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Content Card -->
+        <div class="bg-white rounded-card shadow-card p-6 hover-lift">
+          <span class="text-xs uppercase tracking-widest text-gold font-semibold">Content Card</span>
+          <h3 class="font-display text-xl font-bold text-txt-dark mt-3 mb-2">A Golden Legacy of Impact</h3>
+          <p class="text-txt-body text-sm leading-relaxed mb-4">Celebrating 50 years of grace, faith, and purpose.</p>
+          <button class="text-royal font-semibold text-sm hover:text-royal-light transition-colors">Read more &rarr;</button>
+        </div>
+
+        <!-- Media Card -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="h-48 bg-gradient-to-br from-blush to-rose flex items-center justify-center">
+            <svg class="w-12 h-12 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          </div>
+          <div class="p-5">
+            <p class="font-semibold text-txt-dark">Aunty Funke</p>
+            <p class="text-sm text-txt-muted mt-1">A blessed and beautiful woman of God!</p>
+          </div>
+        </div>
+
+        <!-- Wish Card -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-bold text-sm">BA</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Brother Ade</p>
+              <p class="text-xs text-txt-muted">April 20, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Happy 50th birthday, Pastor! Your life is a testament to faithfulness and love. May the Lord continue to bless you abundantly."</p>
+        </div>
+
+        <!-- Stat Card (Admin) -->
+        <div class="bg-white rounded-card shadow-card p-6 border-l-4 border-gold">
+          <p class="text-sm text-txt-muted font-medium uppercase tracking-wider">Total Tributes</p>
+          <p class="font-display text-4xl font-bold text-txt-dark mt-1">127</p>
+          <p class="text-sm text-emerald-600 mt-2 font-medium">+12 today</p>
+        </div>
+      </div>
+
+      <!-- Glass card on dark -->
+      <div class="gradient-hero rounded-card p-8 mt-8">
+        <h3 class="font-display text-lg font-semibold text-white mb-4">Glass Card (on dark surfaces)</h3>
+        <div class="glass-card rounded-card p-6">
+          <p class="text-white font-semibold">Glass overlay content</p>
+          <p class="text-white/70 text-sm mt-2">Used for hero overlays, floating panels, and elevated content on gradient backgrounds.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FORM ELEMENTS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Form Elements</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="max-w-lg space-y-6">
+        <!-- Text Input -->
+        <div>
+          <label class="block text-sm font-semibold text-txt-dark mb-2">Your Name <span class="text-rose">*</span></label>
+          <input type="text" placeholder="Enter your full name" class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-white text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all duration-300">
+        </div>
+        <!-- Textarea -->
+        <div>
+          <label class="block text-sm font-semibold text-txt-dark mb-2">Your Message</label>
+          <textarea rows="4" placeholder="Write your birthday tribute here..." class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-white text-txt-body placeholder-txt-muted/50 focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all duration-300 resize-none"></textarea>
+        </div>
+        <!-- File Upload -->
+        <div>
+          <label class="block text-sm font-semibold text-txt-dark mb-2">Upload Photo</label>
+          <div class="border-2 border-dashed border-gold-light rounded-xl p-8 text-center hover:border-gold transition-colors duration-300 cursor-pointer bg-gold-glow/20">
+            <svg class="w-10 h-10 text-gold mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+            <p class="text-sm font-semibold text-txt-dark">Click or drag to upload</p>
+            <p class="text-xs text-txt-muted mt-1">JPG, PNG, or WebP up to 10MB</p>
+          </div>
+        </div>
+        <!-- Select -->
+        <div>
+          <label class="block text-sm font-semibold text-txt-dark mb-2">Tribute Type</label>
+          <select class="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-white text-txt-body focus:outline-none focus:border-royal focus:ring-2 focus:ring-royal/20 transition-all duration-300 appearance-none">
+            <option>Text Tribute</option>
+            <option>Photo + Caption</option>
+            <option>Video Message</option>
+          </select>
+        </div>
+        <!-- Error state -->
+        <div>
+          <label class="block text-sm font-semibold text-txt-dark mb-2">Name (Error State)</label>
+          <input type="text" value="AB" class="w-full px-4 py-3 rounded-xl border-2 border-red-400 bg-red-50 text-txt-body focus:outline-none focus:ring-2 focus:ring-red-200 transition-all duration-300">
+          <p class="text-red-600 text-xs mt-1.5 font-medium">Name must be at least 3 characters.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SPACING & LAYOUT ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Spacing &amp; Layout</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="space-y-6">
+        <div class="bg-white rounded-card shadow-card p-6">
+          <h3 class="font-body font-bold text-txt-dark mb-4">Spacing Scale</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">4px</span><div class="h-4 bg-royal/20 rounded" style="width:16px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">8px</span><div class="h-4 bg-royal/30 rounded" style="width:32px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">16px</span><div class="h-4 bg-royal/40 rounded" style="width:64px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">24px</span><div class="h-4 bg-royal/50 rounded" style="width:96px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">32px</span><div class="h-4 bg-royal/60 rounded" style="width:128px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">48px</span><div class="h-4 bg-royal/70 rounded" style="width:192px"></div></div>
+            <div class="flex items-center gap-4"><span class="w-16 text-sm text-txt-muted">64px</span><div class="h-4 bg-royal/80 rounded" style="width:256px"></div></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-card shadow-card p-6">
+          <h3 class="font-body font-bold text-txt-dark mb-4">Border Radius</h3>
+          <div class="flex flex-wrap gap-6 items-end">
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded"></div><p class="text-xs text-txt-muted mt-2">4px</p></div>
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded-lg"></div><p class="text-xs text-txt-muted mt-2">8px</p></div>
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded-xl"></div><p class="text-xs text-txt-muted mt-2">12px</p></div>
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded-card"></div><p class="text-xs text-txt-muted mt-2">16px (card)</p></div>
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded-3xl"></div><p class="text-xs text-txt-muted mt-2">24px</p></div>
+            <div class="text-center"><div class="w-16 h-16 bg-royal rounded-full"></div><p class="text-xs text-txt-muted mt-2">full (pill)</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Navigation</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <!-- Desktop Nav -->
+      <div class="mb-8">
+        <h3 class="font-body font-bold text-txt-dark mb-4">Desktop Navbar</h3>
+        <nav class="gradient-hero rounded-card px-6 py-4 flex items-center justify-between">
+          <a href="#" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+          <div class="hidden md:flex items-center gap-8">
+            <a href="#" class="text-white/80 hover:text-gold text-sm font-medium transition-colors">Home</a>
+            <a href="#" class="text-white/80 hover:text-gold text-sm font-medium transition-colors">Gallery</a>
+            <a href="#" class="text-white/80 hover:text-gold text-sm font-medium transition-colors">Tributes</a>
+            <a href="#" class="bg-gold text-royal-dark font-semibold px-5 py-2 rounded-pill text-sm hover:bg-gold/90 transition-all">Send a Tribute</a>
+          </div>
+          <button class="md:hidden text-white">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Mobile Nav -->
+      <div>
+        <h3 class="font-body font-bold text-txt-dark mb-4">Mobile Sidebar (overlay)</h3>
+        <div class="max-w-xs gradient-hero rounded-card p-6">
+          <div class="flex items-center justify-between mb-8">
+            <span class="font-script text-gold text-2xl">Menu</span>
+            <button class="text-white/60 hover:text-white"><svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+          </div>
+          <div class="space-y-4">
+            <a href="#" class="block text-white font-medium py-2 border-b border-white/10">Home</a>
+            <a href="#" class="block text-white/80 font-medium py-2 border-b border-white/10">Upload Video</a>
+            <a href="#" class="block text-white/80 font-medium py-2 border-b border-white/10">Send a Tribute</a>
+            <a href="#" class="block text-white/80 font-medium py-2 border-b border-white/10">Gallery</a>
+            <a href="#" class="block text-white/80 font-medium py-2 border-b border-white/10">Tributes Wall</a>
+          </div>
+          <button class="mt-8 w-full bg-gold text-royal-dark font-semibold py-3 rounded-pill text-sm">Send a Tribute</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SPECIAL ELEMENTS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Special Elements</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="space-y-8">
+        <!-- Gold Divider -->
+        <div>
+          <h3 class="font-body font-bold text-txt-dark mb-4">Gold Divider</h3>
+          <div class="gold-divider"></div>
+        </div>
+        <!-- Badge -->
+        <div>
+          <h3 class="font-body font-bold text-txt-dark mb-4">Badges</h3>
+          <div class="flex flex-wrap gap-3">
+            <span class="bg-gold/20 text-gold border border-gold/30 px-3 py-1 rounded-full text-xs font-semibold">Video</span>
+            <span class="bg-royal/10 text-royal px-3 py-1 rounded-full text-xs font-semibold">Photo</span>
+            <span class="bg-blush text-berry px-3 py-1 rounded-full text-xs font-semibold">Text Tribute</span>
+            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">New</span>
+          </div>
+        </div>
+        <!-- Shimmer accent -->
+        <div>
+          <h3 class="font-body font-bold text-txt-dark mb-4">Gold Shimmer Accent</h3>
+          <div class="animate-shimmer h-1 rounded-full w-48 bg-clip-text"></div>
+        </div>
+        <!-- Tab bar -->
+        <div>
+          <h3 class="font-body font-bold text-txt-dark mb-4">Tab Bar</h3>
+          <div class="inline-flex bg-white rounded-pill shadow-card p-1.5">
+            <button class="bg-royal text-white px-6 py-2 rounded-pill text-sm font-semibold transition-all">Videos</button>
+            <button class="text-txt-muted px-6 py-2 rounded-pill text-sm font-medium hover:text-royal transition-colors">Photos</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== GRADIENTS ==================== -->
+    <section>
+      <h2 class="font-display text-3xl font-bold text-txt-dark mb-2">Gradients</h2>
+      <div class="gold-divider mb-8"></div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="h-32 rounded-card gradient-hero flex items-center justify-center"><p class="text-white text-sm font-semibold">Hero Gradient (Purple to Berry)</p></div>
+        <div class="h-32 rounded-card gradient-berry flex items-center justify-center"><p class="text-white text-sm font-semibold">Berry Gradient</p></div>
+        <div class="h-32 rounded-card bg-gradient-to-br from-blush-light to-blush flex items-center justify-center"><p class="text-berry text-sm font-semibold">Blush Card Surface</p></div>
+        <div class="h-32 rounded-card bg-gradient-to-r from-gold to-gold-light flex items-center justify-center"><p class="text-royal-dark text-sm font-semibold">Gold Accent Bar</p></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="gradient-hero text-center py-10 px-6 mt-20">
+    <p class="font-script text-gold text-2xl mb-2">Pastor Olakiitan Olaleye @ 50</p>
+    <p class="text-white/60 text-sm">Design System v1.0 | Birthday Celebration Website</p>
+  </footer>
+
+</body>
+</html>

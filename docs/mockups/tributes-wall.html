@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tributes Wall - Olakiitan at 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{royal:{DEFAULT:'#4B1D6E',light:'#6B3FA0',dark:'#2D1048'},orchid:'#9A5EC7',gold:{DEFAULT:'#C9A84C',light:'#E8D49B',glow:'#F5E6C8'},berry:{DEFAULT:'#7A1B3E',light:'#A62256'},rose:'#D4708F',blush:{DEFAULT:'#F5D5E0',light:'#FDE8EF'},ivory:'#FFF8F0',cream:'#FFFDF7',txt:{dark:'#1A0A2E',body:'#3D2955',muted:'#8E7BA7'}},fontFamily:{display:['Playfair Display','serif'],body:['DM Sans','sans-serif'],script:['Great Vibes','cursive']},borderRadius:{card:'16px',pill:'100px'},boxShadow:{card:'0 4px 24px rgba(75,29,110,0.10)',glow:'0 0 30px rgba(201,168,76,0.25)',lift:'0 8px 32px rgba(75,29,110,0.18)'}}}}
+  </script>
+  <style>
+    body{font-family:'DM Sans',sans-serif}.font-display{font-family:'Playfair Display',serif}.font-script{font-family:'Great Vibes',cursive}
+    .gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+    .gradient-hero{background:linear-gradient(135deg,#2D1048 0%,#4B1D6E 40%,#7A1B3E 100%)}
+    .hover-lift{transition:transform .3s ease,box-shadow .3s ease}.hover-lift:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(75,29,110,.18)}
+    .masonry{columns:1;column-gap:1.25rem}
+    @media(min-width:640px){.masonry{columns:2}}
+    @media(min-width:1024px){.masonry{columns:3}}
+    .masonry>*{break-inside:avoid;margin-bottom:1.25rem}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-fade-up{animation:fadeUp .8s ease-out both}
+  </style>
+</head>
+<body class="bg-ivory text-txt-body">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 gradient-hero/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="home.html" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="home.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Home</a>
+        <a href="gallery.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Gallery</a>
+        <a href="tributes-wall.html" class="text-gold text-sm font-medium">Tributes</a>
+        <a href="submit-wish.html" class="bg-gold text-royal-dark font-semibold px-5 py-2 rounded-pill text-sm hover:bg-gold/90 transition-all">Send a Tribute</a>
+      </div>
+      <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 pb-4">
+      <a href="home.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Home</a>
+      <a href="upload-video.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Upload Video</a>
+      <a href="submit-wish.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Send a Tribute</a>
+      <a href="gallery.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Gallery</a>
+      <a href="tributes-wall.html" class="block py-3 text-gold font-medium border-b border-white/10">Tributes Wall</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <section class="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
+    <p class="text-gold-light uppercase tracking-[0.2em] text-xs font-semibold mb-3">Words From the Heart</p>
+    <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-3">Tributes Wall</h1>
+    <p class="text-white/60 max-w-md mx-auto">Every message here is a note of love, gratitude, and celebration for Pastor Olakiitan's remarkable 50 years.</p>
+    <div class="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0"/></svg></div>
+  </section>
+
+  <!-- TRIBUTES MASONRY -->
+  <section class="py-12 md:py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Counter -->
+      <div class="text-center mb-10">
+        <span class="inline-flex items-center gap-2 bg-white rounded-pill shadow-card px-6 py-2 text-sm">
+          <svg class="w-4 h-4 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+          <span class="font-semibold text-txt-dark">47</span> <span class="text-txt-muted">tributes shared so far</span>
+        </span>
+      </div>
+
+      <!-- Masonry grid -->
+      <div class="masonry">
+
+        <!-- Tribute 1 (long) -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-bold text-sm">FA</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Funke Adeyemi</p>
+              <p class="text-xs text-txt-muted">April 20, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Dear Pastor Olakiitan, you have been more than a spiritual leader to our family. You have been a mother, a counsellor, and a pillar of strength. Your 50th birthday is a celebration of everything beautiful, and we are honoured to share this moment with you. May the Lord continue to enlarge your territory and bless the work of your hands. We love you beyond words."</p>
+        </div>
+
+        <!-- Tribute 2 (short) -->
+        <div class="bg-white rounded-card p-6 shadow-card border-l-4 border-gold hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-royal-dark font-bold text-sm">KO</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Kunle Ogunbiyi</p>
+              <p class="text-xs text-txt-muted">April 19, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Happy 50th! Praying for more strength, grace, and blessings upon your life, Mummy."</p>
+        </div>
+
+        <!-- Tribute 3 (medium) -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-berry flex items-center justify-center text-white font-bold text-sm">BA</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Brother Ade</p>
+              <p class="text-xs text-txt-muted">April 18, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"50 looks glorious on you, Pastor! Thank you for decades of kindness, patience, and unwavering faith. Your legacy speaks louder than any sermon. Happy golden jubilee!"</p>
+        </div>
+
+        <!-- Tribute 4 (long) -->
+        <div class="bg-white rounded-card p-6 shadow-card border-l-4 border-royal hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-royal-light flex items-center justify-center text-white font-bold text-sm">SB</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Sister Bola Adekunle</p>
+              <p class="text-xs text-txt-muted">April 18, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Mummy Pastor, I remember the day you prayed over my family during a very difficult season. Your words carried power, and your faith carried us. Today we celebrate the God who lives in you and works through you. Happy birthday, our beloved shepherd. May your cup overflow with joy and divine surprises."</p>
+        </div>
+
+        <!-- Tribute 5 (short) -->
+        <div class="bg-gradient-to-br from-gold-glow/40 to-ivory rounded-card p-6 border border-gold-light/40 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-royal-dark font-bold text-sm">DT</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Deacon Tunde</p>
+              <p class="text-xs text-txt-muted">April 17, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"God bless you richly at 50, Pastor. You are a walking testimony."</p>
+        </div>
+
+        <!-- Tribute 6 -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-berry-light flex items-center justify-center text-white font-bold text-sm">NG</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Ngozi Eze</p>
+              <p class="text-xs text-txt-muted">April 17, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"From Lagos to beyond, your impact echoes everywhere. You have inspired thousands and loved them as your own. Happy 50th birthday to a truly remarkable woman of God!"</p>
+        </div>
+
+        <!-- Tribute 7 (short) -->
+        <div class="bg-white rounded-card p-6 shadow-card border-l-4 border-rose hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-rose flex items-center justify-center text-white font-bold text-sm">MK</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Mama Kemi</p>
+              <p class="text-xs text-txt-muted">April 16, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"My daughter in the Lord, you make us all proud. Happy golden year!"</p>
+        </div>
+
+        <!-- Tribute 8 -->
+        <div class="bg-gradient-to-br from-gold-glow/40 to-ivory rounded-card p-6 border border-gold-light/40 hover-lift">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-orchid flex items-center justify-center text-white font-bold text-sm">PD</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Pastor Dara</p>
+              <p class="text-xs text-txt-muted">April 16, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Olakiitan, your name means 'God has done wonders,' and truly He has. May the second half be even more glorious than the first. Happy 50th, my friend!"</p>
+        </div>
+
+        <!-- Tribute 9 (short) -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-bold text-sm">EO</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Elder Obi</p>
+              <p class="text-xs text-txt-muted">April 15, 2026</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"More grace, more glory, more impact. Happy birthday, Pastor!"</p>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="text-center mt-12">
+        <p class="text-txt-muted mb-4">Add your own heartfelt tribute to the wall</p>
+        <a href="submit-wish.html" class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-8 py-3 rounded-pill shadow-glow transition-all duration-300 inline-flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+          Write Your Tribute
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-royal-dark py-10 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="font-script text-gold text-2xl mb-3">Pastor Olakiitan Olaleye @ 50</p>
+      <div class="flex justify-center gap-6 mb-6 flex-wrap">
+        <a href="home.html" class="text-white/50 hover:text-gold text-sm transition-colors">Home</a>
+        <a href="submit-wish.html" class="text-white/50 hover:text-gold text-sm transition-colors">Send a Tribute</a>
+        <a href="gallery.html" class="text-white/50 hover:text-gold text-sm transition-colors">Gallery</a>
+      </div>
+      <div class="gold-divider max-w-xs mx-auto mb-6"></div>
+      <p class="text-white/30 text-xs">Made with love for Pastor Olakiitan Olaleye's 50th birthday</p>
+    </div>
+  </footer>
+
+</body>
+</html>

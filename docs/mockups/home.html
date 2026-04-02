@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celebrating Pastor Olakiitan Olaleye at 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            royal: { DEFAULT: '#4B1D6E', light: '#6B3FA0', dark: '#2D1048' },
+            orchid: '#9A5EC7',
+            gold: { DEFAULT: '#C9A84C', light: '#E8D49B', glow: '#F5E6C8' },
+            berry: { DEFAULT: '#7A1B3E', light: '#A62256' },
+            rose: '#D4708F',
+            blush: { DEFAULT: '#F5D5E0', light: '#FDE8EF' },
+            ivory: '#FFF8F0',
+            cream: '#FFFDF7',
+            txt: { dark: '#1A0A2E', body: '#3D2955', muted: '#8E7BA7' }
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body: ['DM Sans', 'sans-serif'],
+            script: ['Great Vibes', 'cursive'],
+          },
+          borderRadius: { card: '16px', pill: '100px' },
+          boxShadow: {
+            card: '0 4px 24px rgba(75, 29, 110, 0.10)',
+            glow: '0 0 30px rgba(201, 168, 76, 0.25)',
+            lift: '0 8px 32px rgba(75, 29, 110, 0.18)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .font-script { font-family: 'Great Vibes', cursive; }
+    .gold-divider { height: 2px; background: linear-gradient(90deg, transparent, #C9A84C, transparent); }
+    .gradient-hero { background: linear-gradient(135deg, #2D1048 0%, #4B1D6E 40%, #7A1B3E 100%); }
+    .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); }
+    .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(75, 29, 110, 0.18); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .animate-fade-up { animation: fadeUp 0.8s ease-out both; }
+    .animate-fade-up-delay { animation: fadeUp 0.8s ease-out 0.2s both; }
+    .animate-fade-up-delay-2 { animation: fadeUp 0.8s ease-out 0.4s both; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    /* Confetti dots */
+    .confetti-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; opacity: 0.15; }
+    /* Read more reveal */
+    .bio-container { position: relative; max-height: 7.5em; overflow: hidden; transition: max-height 0.6s ease; }
+    .bio-container.expanded { max-height: 2000px; }
+    .bio-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 4em; background: linear-gradient(to bottom, rgba(255,248,240,0), #FFF8F0); pointer-events: none; transition: opacity 0.4s ease; }
+    .bio-container.expanded + .bio-fade, .bio-container.expanded ~ .bio-fade { opacity: 0; }
+  </style>
+</head>
+<body class="bg-ivory text-txt-body">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="fixed top-0 left-0 right-0 z-50 gradient-hero/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="home.html" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="home.html" class="text-gold text-sm font-medium">Home</a>
+        <a href="gallery.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Gallery</a>
+        <a href="tributes-wall.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Tributes</a>
+        <a href="submit-wish.html" class="bg-gold text-royal-dark font-semibold px-5 py-2 rounded-pill text-sm hover:bg-gold/90 transition-all">Send a Tribute</a>
+      </div>
+      <button id="mobile-menu-btn" class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 pb-4">
+      <a href="home.html" class="block py-3 text-gold font-medium border-b border-white/10">Home</a>
+      <a href="upload-video.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Upload Video</a>
+      <a href="submit-wish.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Send a Tribute</a>
+      <a href="gallery.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Gallery</a>
+      <a href="tributes-wall.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Tributes Wall</a>
+      <a href="submit-wish.html" class="block mt-4 bg-gold text-royal-dark font-semibold py-3 rounded-pill text-center text-sm">Send a Tribute</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="gradient-hero relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24">
+    <!-- Decorative elements -->
+    <div class="confetti-dot bg-gold top-20 left-[10%]" style="position:absolute"></div>
+    <div class="confetti-dot bg-blush top-32 right-[15%]" style="position:absolute; width:12px; height:12px"></div>
+    <div class="confetti-dot bg-orchid bottom-24 left-[20%]" style="position:absolute; width:6px; height:6px"></div>
+    <div class="confetti-dot bg-gold bottom-20 right-[25%]" style="position:absolute"></div>
+
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <!-- Tagline -->
+      <p class="animate-fade-up text-gold-light uppercase tracking-[0.25em] text-xs md:text-sm font-semibold mb-6">Celebrating a Golden Legacy of Impact</p>
+
+      <!-- Portrait Placeholder -->
+      <div class="animate-fade-up-delay mx-auto w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-gold/40 shadow-glow mb-8 overflow-hidden bg-gradient-to-br from-royal-light to-berry flex items-center justify-center">
+        <div class="text-center">
+          <svg class="w-14 h-14 text-white/30 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          <p class="text-white/40 text-xs mt-1">Photo</p>
+        </div>
+      </div>
+
+      <!-- Celebrant Name -->
+      <p class="animate-fade-up-delay font-script text-gold text-3xl md:text-5xl mb-2">Pastor Olakiitan</p>
+      <h1 class="animate-fade-up-delay font-display text-4xl md:text-6xl font-extrabold text-white mb-4">Olaleye at <span class="text-gold">50</span></h1>
+      <p class="animate-fade-up-delay-2 text-white/70 max-w-lg mx-auto mb-4 leading-relaxed">Join us in celebrating 50 years of grace, faithfulness, and a legacy that has touched lives across generations.</p>
+
+      <!-- Event details -->
+      <div class="animate-fade-up-delay-2 glass-card inline-flex items-center gap-4 md:gap-6 px-6 py-3 rounded-pill mb-10 text-sm">
+        <span class="flex items-center gap-1.5 text-gold-light">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+          April 22, 2026
+        </span>
+        <span class="w-px h-4 bg-white/20"></span>
+        <span class="flex items-center gap-1.5 text-white/70">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          1 PM WAT
+        </span>
+      </div>
+
+      <!-- CTA Group -->
+      <div class="animate-fade-up-delay-2 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="submit-wish.html" class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-8 py-4 rounded-pill shadow-glow transition-all duration-300 hover:scale-[1.03] text-center">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+            Send a Tribute
+          </span>
+        </a>
+        <a href="upload-video.html" class="border-2 border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-pill transition-all duration-300 hover:scale-[1.03] text-center">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+            Upload a Video
+          </span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Bottom wave -->
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 60V30C240 0 480 0 720 30C960 60 1200 60 1440 30V60H0Z" fill="#FFF8F0"/></svg>
+    </div>
+  </section>
+
+  <!-- ===== CELEBRATION INTRO ===== -->
+  <section class="py-16 md:py-24 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <p class="font-script text-gold text-2xl mb-4">50 Years of Grace</p>
+      <h2 class="font-display text-3xl md:text-4xl font-bold text-txt-dark mb-6">A Life of Faith, Service, and Love</h2>
+      <div class="gold-divider max-w-xs mx-auto mb-8"></div>
+
+      <!-- Biography with Read More (Amendment 2) -->
+      <div id="bio-wrapper" class="text-left md:text-center relative">
+        <div id="bio-text" class="bio-container">
+          <p class="text-txt-body leading-relaxed text-lg mb-4">Olakiitan Josephine Olaleye, affectionately known as "Laitan" by many and "Ms LightsOn!" by the thousands of school students she inspires, has spent five decades embodying resilience, grace, and excellence. As she hits this golden milestone, we celebrate a life that is a resounding testimony to God's mercy.</p>
+          <p class="text-txt-body leading-relaxed mb-4"><strong class="text-txt-dark">Early Life and Education</strong><br>Laitan's journey is defined by divine intervention. Just days before her first birthday, she crawled beneath the massive tyres of her father's "911 truck." The engine roared to life, but before the vehicle could move, God intervened, sparing her life for the great purpose she carries today.</p>
+          <p class="text-txt-body leading-relaxed mb-4">Born on Thursday, April 22, 1976, in Owo, Ondo State, to Chief Francis Fabamiwoye Fadeyi (Ojumu) and Madam Monisola Lydia Fadeyi, Laitan was raised with a foundation of hard work and integrity. Though her parents lacked formal literacy, they deeply valued education, a passion Laitan inherited.</p>
+          <p class="text-txt-body leading-relaxed mb-4">Her academic journey took her from St. John Mary's Demonstration School to Baptist High School, Ile-Oluji. Her brilliance earned her the Ayo Ogunrinde Academic Scholarship, allowing her to complete her secondary education at St. John/Mary's Unity Secondary School, Owo. She eventually proceeded to the prestigious Obafemi Awolowo University (OAU), Ile-Ife, where she earned her Bachelor of Pharmacy degree.</p>
+          <p class="text-txt-body leading-relaxed mb-4"><strong class="text-txt-dark">The Professional &amp; Entrepreneurial Visionary</strong><br>With a career spanning over 25 years, Laitan's professional footprint is vast. She founded Springcare Pharmacy Ltd, a people-focused practice built on professionalism and quality care that has since expanded to multiple branches across Lagos. Her visionary leadership extended into Life Hub Events and Spaces, Just Exotic Concepts, and LightsOn Impact Consulting.</p>
+          <p class="text-txt-body leading-relaxed mb-4">A certified Maxwell Leadership Coach and an Emotional Intelligence Coach (Six Seconds, USA), Laitan is a respected voice in the Association of Community Pharmacists of Nigeria (ACPN) and the NECA's Network of Entrepreneurial Women (NNEW).</p>
+          <p class="text-txt-body leading-relaxed mb-4"><strong class="text-txt-dark">Family: The Heartbeat of Her Life</strong><br>On April 17, 2004, Laitan married her "darling," Pastor Joshua Adeyemi Olaleye. Together, they have built a home rooted in love and impact. They are blessed with three sons, Oluwatomisin, Oluwateniola, and Oluwatisefunmi, as well as numerous spiritual children whom she nurtures with a mother's heart.</p>
+          <p class="text-txt-body leading-relaxed mb-4"><strong class="text-txt-dark">Faith and Ministerial Life</strong><br>Since accepting Christ in July 1991, Laitan has been an unapologetic ambassador for the Gospel. As an ordained Pastor in the Redeemed Christian Church of God (RCCG), she has ministered in various capacities alongside her husband. Through her signature Family Service platform, she brings the Word of God into practical reality, serving as a vessel for restoring homes, providing direction, and empowering people to live with clear purpose.</p>
+          <p class="text-txt-body leading-relaxed mb-4"><strong class="text-txt-dark">Impact and Legacy</strong><br>Through the Maxwell Leadership Foundation's iLEAD initiative, she has led teams across Lagos State to reach thousands of students in hundreds of schools. This inspired the launch of the Lightson Impact Foundation for Empowerment (LIFE), which provides underprivileged individuals with a better head start in life.</p>
+          <p class="text-txt-muted leading-relaxed italic">As she marks this golden milestone, we celebrate a journey sustained by grace and defined by integrity. Pastor Laitan Olaleye remains a beloved friend, a guiding mentor, and a pillar of her family whose smile warms every room she enters.</p>
+        </div>
+        <div id="bio-fade" class="bio-fade"></div>
+        <button id="bio-toggle" onclick="toggleBio()" class="mt-4 text-gold hover:text-gold/80 font-semibold text-sm inline-flex items-center gap-1 transition-colors">
+          <span id="bio-toggle-text">Read More</span>
+          <svg id="bio-chevron" class="w-4 h-4 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LAITAN THROUGH THE YEARS ===== -->
+  <!-- ADMIN ONLY: Photos and captions in this section are uploaded via the admin dashboard -->
+  <section class="py-16 md:py-20 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-2">A Journey in Pictures</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-txt-dark">Laitan Throughout the Years</h2>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+        <!-- Photo slot 1 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-blush-light border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+        <!-- Photo slot 2 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-ivory border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+        <!-- Photo slot 3 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-blush-light border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+        <!-- Photo slot 4 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-ivory border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+        <!-- Photo slot 5 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-blush-light border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+        <!-- Photo slot 6 -->
+        <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+          <div class="aspect-[4/5] bg-ivory border-2 border-dashed border-gold-light flex items-center justify-center">
+            <svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          </div>
+          <div class="p-3"><p class="text-sm text-txt-muted text-center">Caption placeholder</p></div>
+        </div>
+      </div>
+      <div class="text-center mt-10">
+        <a href="gallery.html#laitan-photos" class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-8 py-3 rounded-pill shadow-glow transition-all duration-300 inline-flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+          See Laitan's Photos
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW TO PARTICIPATE ===== -->
+  <section class="py-16 md:py-20 px-4 bg-gradient-to-b from-ivory to-blush-light/30">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-2">Be Part of the Celebration</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-txt-dark">Three Ways to Share Your Love</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Card 1: Text Tribute -->
+        <a href="submit-wish.html" class="bg-white rounded-card shadow-card p-8 text-center hover-lift block group">
+          <div class="w-16 h-16 rounded-full bg-blush mx-auto mb-5 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+            <svg class="w-7 h-7 text-berry" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-txt-dark mb-2">Write a Tribute</h3>
+          <p class="text-txt-muted text-sm leading-relaxed">Pen a heartfelt birthday message that will appear on the Tributes Wall for everyone to read.</p>
+        </a>
+
+        <!-- Card 2: Photo -->
+        <a href="submit-wish.html" class="bg-white rounded-card shadow-card p-8 text-center hover-lift block group">
+          <div class="w-16 h-16 rounded-full bg-gold-glow mx-auto mb-5 flex items-center justify-center group-hover:bg-gold/30 transition-colors">
+            <svg class="w-7 h-7 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-txt-dark mb-2">Share a Photo</h3>
+          <p class="text-txt-muted text-sm leading-relaxed">Upload a favourite photo with a short caption to add to the celebration gallery.</p>
+        </a>
+
+        <!-- Card 3: Video -->
+        <a href="upload-video.html" class="bg-white rounded-card shadow-card p-8 text-center hover-lift block group">
+          <div class="w-16 h-16 rounded-full bg-blush mx-auto mb-5 flex items-center justify-center group-hover:bg-royal/10 transition-colors">
+            <svg class="w-7 h-7 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-txt-dark mb-2">Record a Video</h3>
+          <p class="text-txt-muted text-sm leading-relaxed">Record a personal video greeting up to 90 seconds that will live in the celebration gallery.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RECENT CONTRIBUTIONS PREVIEW ===== -->
+  <section class="py-16 md:py-20 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-2">A Growing Collection of Love</p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-txt-dark">Recent Tributes</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-10">
+        <!-- Tribute preview 1 -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-royal flex items-center justify-center text-white font-bold text-sm">FA</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Funke Adeyemi</p>
+              <p class="text-xs text-txt-muted">2 hours ago</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Happy golden jubilee, Pastor! Your counselling changed my family. We love and celebrate you."</p>
+        </div>
+        <!-- Tribute preview 2 -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-berry flex items-center justify-center text-white font-bold text-sm">KO</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Kunle Ogunbiyi</p>
+              <p class="text-xs text-txt-muted">5 hours ago</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"Praying for continued strength and grace upon your life. You are a blessing, Mummy!"</p>
+        </div>
+        <!-- Tribute preview 3 -->
+        <div class="bg-gradient-to-br from-blush-light to-blush rounded-card p-6 border border-rose/20 hover-lift">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-royal-dark font-bold text-sm">BA</div>
+            <div>
+              <p class="font-semibold text-txt-dark text-sm">Brother Ade</p>
+              <p class="text-xs text-txt-muted">1 day ago</p>
+            </div>
+          </div>
+          <p class="text-txt-body text-sm leading-relaxed italic">"50 looks glorious on you, Pastor! Thank you for decades of kindness and unwavering faith."</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <a href="tributes-wall.html" class="border-2 border-royal text-royal hover:bg-royal hover:text-white font-semibold px-8 py-3 rounded-pill transition-all duration-300 inline-flex items-center gap-2">
+          View All Tributes
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BIBLE VERSE ===== -->
+  <section class="py-16 md:py-24 px-4 relative overflow-hidden" style="background:#2D1048">
+    <div class="absolute inset-0" style="background:radial-gradient(ellipse at center, rgba(201,168,76,0.12) 0%, transparent 60%)"></div>
+    <div class="max-w-3xl mx-auto text-center relative z-10">
+      <p class="uppercase tracking-[0.3em] text-xs font-semibold text-gold mb-6" style="font-variant:small-caps">Isaiah 60:1 NLT</p>
+      <blockquote class="font-display text-2xl md:text-4xl font-normal italic text-white/95 leading-snug mb-0">
+        &ldquo;Arise, Jerusalem! Let your light shine for all to see. For the glory of the LORD rises to shine on you.&rdquo;
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ===== EVENT DETAILS STRIP ===== -->
+  <section class="gradient-hero py-12 md:py-16 px-4 relative">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-8">
+        <p class="font-script text-gold text-2xl mb-2">You Are Warmly Invited</p>
+        <h2 class="font-display text-2xl md:text-3xl font-bold text-white">50th Birthday Celebration &amp; Foundation Launch</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-6 text-center">
+        <div class="glass-card rounded-card p-6">
+          <svg class="w-8 h-8 text-gold mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+          <p class="text-white font-semibold">Wednesday</p>
+          <p class="text-gold-light text-lg font-display font-bold">April 22, 2026</p>
+        </div>
+        <div class="glass-card rounded-card p-6">
+          <svg class="w-8 h-8 text-gold mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <p class="text-white font-semibold">Time</p>
+          <p class="text-gold-light text-lg font-display font-bold">1:00 PM WAT</p>
+        </div>
+        <div class="glass-card rounded-card p-6">
+          <svg class="w-8 h-8 text-gold mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+          <p class="text-white font-semibold">Venue</p>
+          <p class="text-gold-light text-sm font-medium">RCCG Maranatha Church, Gbagada, Lagos</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <p class="text-white/60 text-sm">Dress Code: Touch of <span class="text-gold font-semibold">Gold</span> or <span class="text-orchid font-semibold">Purple</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-royal-dark py-10 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="font-script text-gold text-2xl mb-3">Pastor Olakiitan Olaleye @ 50</p>
+      <p class="text-white/40 text-sm mb-6">Celebrating a Golden Legacy of Impact</p>
+      <div class="flex justify-center gap-6 mb-6 flex-wrap">
+        <a href="home.html" class="text-white/50 hover:text-gold text-sm transition-colors">Home</a>
+        <a href="submit-wish.html" class="text-white/50 hover:text-gold text-sm transition-colors">Send a Tribute</a>
+        <a href="upload-video.html" class="text-white/50 hover:text-gold text-sm transition-colors">Upload Video</a>
+        <a href="gallery.html" class="text-white/50 hover:text-gold text-sm transition-colors">Gallery</a>
+        <a href="tributes-wall.html" class="text-white/50 hover:text-gold text-sm transition-colors">Tributes</a>
+      </div>
+      <div class="gold-divider max-w-xs mx-auto mb-6"></div>
+      <p class="text-white/30 text-xs">Made with love for the 50th birthday celebration of Pastor Olakiitan Olaleye</p>
+      <a href="admin.html" class="text-white/20 hover:text-white/40 text-xs mt-2 inline-block transition-colors">Admin</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleBio() {
+      const bio = document.getElementById('bio-text');
+      const fade = document.getElementById('bio-fade');
+      const toggleText = document.getElementById('bio-toggle-text');
+      const chevron = document.getElementById('bio-chevron');
+      const isExpanded = bio.classList.toggle('expanded');
+      fade.style.opacity = isExpanded ? '0' : '1';
+      toggleText.textContent = isExpanded ? 'Read Less' : 'Read More';
+      chevron.style.transform = isExpanded ? 'rotate(180deg)' : 'rotate(0)';
+    }
+  </script>
+</body>
+</html>

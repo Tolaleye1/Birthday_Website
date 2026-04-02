@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery - Olakiitan at 50</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config={theme:{extend:{colors:{royal:{DEFAULT:'#4B1D6E',light:'#6B3FA0',dark:'#2D1048'},orchid:'#9A5EC7',gold:{DEFAULT:'#C9A84C',light:'#E8D49B',glow:'#F5E6C8'},berry:{DEFAULT:'#7A1B3E',light:'#A62256'},rose:'#D4708F',blush:{DEFAULT:'#F5D5E0',light:'#FDE8EF'},ivory:'#FFF8F0',cream:'#FFFDF7',txt:{dark:'#1A0A2E',body:'#3D2955',muted:'#8E7BA7'}},fontFamily:{display:['Playfair Display','serif'],body:['DM Sans','sans-serif'],script:['Great Vibes','cursive']},borderRadius:{card:'16px',pill:'100px'},boxShadow:{card:'0 4px 24px rgba(75,29,110,0.10)',glow:'0 0 30px rgba(201,168,76,0.25)',lift:'0 8px 32px rgba(75,29,110,0.18)'}}}}
+  </script>
+  <style>
+    body{font-family:'DM Sans',sans-serif}.font-display{font-family:'Playfair Display',serif}.font-script{font-family:'Great Vibes',cursive}
+    .gold-divider{height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent)}
+    .gradient-hero{background:linear-gradient(135deg,#2D1048 0%,#4B1D6E 40%,#7A1B3E 100%)}
+    .hover-lift{transition:transform .3s ease,box-shadow .3s ease}.hover-lift:hover{transform:translateY(-4px);box-shadow:0 8px 32px rgba(75,29,110,.18)}
+    .tab-active{background:#4B1D6E;color:#fff}.tab-inactive{color:#8E7BA7}.tab-inactive:hover{color:#4B1D6E;background:rgba(75,29,110,.05)}
+    .gallery-panel{display:none}.gallery-panel.active{display:block}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-fade-up{animation:fadeUp .8s ease-out both}
+  </style>
+</head>
+<body class="bg-ivory text-txt-body">
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 gradient-hero/95 backdrop-blur-md border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="home.html" class="font-script text-gold text-2xl">Pastor Olakiitan Olaleye @ 50</a>
+      <div class="hidden md:flex items-center gap-6">
+        <a href="home.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Home</a>
+        <a href="gallery.html" class="text-gold text-sm font-medium">Gallery</a>
+        <a href="tributes-wall.html" class="text-white/70 hover:text-gold text-sm font-medium transition-colors">Tributes</a>
+        <a href="submit-wish.html" class="bg-gold text-royal-dark font-semibold px-5 py-2 rounded-pill text-sm hover:bg-gold/90 transition-all">Send a Tribute</a>
+      </div>
+      <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 pb-4">
+      <a href="home.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Home</a>
+      <a href="upload-video.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Upload Video</a>
+      <a href="submit-wish.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Send a Tribute</a>
+      <a href="gallery.html" class="block py-3 text-gold font-medium border-b border-white/10">Gallery</a>
+      <a href="tributes-wall.html" class="block py-3 text-white/80 font-medium border-b border-white/10">Tributes Wall</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <section class="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
+    <p class="text-gold-light uppercase tracking-[0.2em] text-xs font-semibold mb-3">Memories Worth Celebrating</p>
+    <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-3">Celebration Gallery</h1>
+    <p class="text-white/60 max-w-md mx-auto">Browse photos and video messages shared by loved ones for Pastor Olakiitan's 50th birthday.</p>
+    <div class="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0"/></svg></div>
+  </section>
+
+  <!-- GALLERY CONTENT -->
+  <section class="py-12 md:py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Tab Switcher -->
+      <div class="flex justify-center mb-10">
+        <div class="inline-flex bg-white rounded-pill shadow-card p-1.5">
+          <button onclick="switchGallery('videos')" id="gtab-videos" class="tab-active px-8 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/></svg>
+            Videos <span class="bg-royal/10 text-royal px-2 py-0.5 rounded-full text-xs ml-1">8</span>
+          </button>
+          <button onclick="switchGallery('photos')" id="gtab-photos" class="tab-inactive px-8 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+            Photos <span class="bg-gold/10 text-gold px-2 py-0.5 rounded-full text-xs ml-1">15</span>
+          </button>
+          <button onclick="switchGallery('laitan')" id="gtab-laitan" class="tab-inactive px-8 py-2.5 rounded-pill text-sm font-semibold transition-all duration-300 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"/></svg>
+            Laitan's Photos
+          </button>
+        </div>
+      </div>
+
+      <!-- VIDEOS GRID -->
+      <div id="gpanel-videos" class="gallery-panel active">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Video Card 1 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-royal to-berry flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">1:24</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">Deacon Tunde</p>
+              <p class="text-sm text-txt-muted mt-1">A prayer and blessing for the next 50 years</p>
+            </div>
+          </div>
+          <!-- Video Card 2 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-berry to-rose flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">0:58</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">Sister Bola</p>
+              <p class="text-sm text-txt-muted mt-1">Happy birthday from the women's fellowship!</p>
+            </div>
+          </div>
+          <!-- Video Card 3 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-royal-light to-orchid flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">1:30</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">The Adeoye Family</p>
+              <p class="text-sm text-txt-muted mt-1">We love you, Mummy Pastor!</p>
+            </div>
+          </div>
+          <!-- Video Card 4 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-berry-light to-royal flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">0:45</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">Brother Kachi</p>
+              <p class="text-sm text-txt-muted mt-1">God bless you richly, Ma</p>
+            </div>
+          </div>
+          <!-- Video Card 5 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-gold/80 to-berry flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">1:12</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">Pastor Dara</p>
+              <p class="text-sm text-txt-muted mt-1">A word of encouragement from a friend</p>
+            </div>
+          </div>
+          <!-- Video Card 6 -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="relative h-48 bg-gradient-to-br from-orchid to-berry flex items-center justify-center group cursor-pointer">
+              <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">0:32</span>
+            </div>
+            <div class="p-4">
+              <p class="font-semibold text-txt-dark">Aunty Ngozi</p>
+              <p class="text-sm text-txt-muted mt-1">50 golden years of grace!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHOTOS GRID -->
+      <div id="gpanel-photos" class="gallery-panel">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <!-- Photo placeholders -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-blush to-rose flex items-center justify-center"><svg class="w-10 h-10 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Funke A.</p><p class="text-xs text-txt-muted">Golden memories</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-gold-glow to-gold-light flex items-center justify-center"><svg class="w-10 h-10 text-gold/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Deacon Yemi</p><p class="text-xs text-txt-muted">Birthday rehearsal</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-orchid/30 to-blush flex items-center justify-center"><svg class="w-10 h-10 text-royal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Mama Tolu</p><p class="text-xs text-txt-muted">A cherished moment</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-berry/20 to-blush flex items-center justify-center"><svg class="w-10 h-10 text-berry/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Sister Kemi</p><p class="text-xs text-txt-muted">Love from the choir</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-royal/20 to-orchid/20 flex items-center justify-center"><svg class="w-10 h-10 text-royal/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Brother Emeka</p><p class="text-xs text-txt-muted">Family celebration</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-gold/20 to-blush flex items-center justify-center"><svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Pastor James</p><p class="text-xs text-txt-muted">Blessed and beautiful</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-blush to-blush-light flex items-center justify-center"><svg class="w-10 h-10 text-rose/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Sis Grace</p><p class="text-xs text-txt-muted">Throwback moments</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-gradient-to-br from-royal/10 to-gold/10 flex items-center justify-center"><svg class="w-10 h-10 text-royal/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm font-semibold text-txt-dark">Deacon Sam</p><p class="text-xs text-txt-muted">Sunday best</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== LAITAN'S PHOTOS ===== -->
+      <!-- ADMIN ONLY: This section is populated exclusively via the admin dashboard -->
+      <div id="gpanel-laitan" class="gallery-panel">
+        <div class="text-center mb-8">
+          <p class="text-txt-muted">A personal collection curated by the host</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <!-- Curated photo slots -->
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-blush-light border-2 border-dashed border-gold-light flex items-center justify-center"><svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm text-txt-muted text-center">Admin caption</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-ivory border-2 border-dashed border-gold-light flex items-center justify-center"><svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm text-txt-muted text-center">Admin caption</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-blush-light border-2 border-dashed border-gold-light flex items-center justify-center"><svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm text-txt-muted text-center">Admin caption</p></div>
+          </div>
+          <div class="bg-white rounded-card shadow-card overflow-hidden hover-lift">
+            <div class="aspect-square bg-ivory border-2 border-dashed border-gold-light flex items-center justify-center"><svg class="w-10 h-10 text-gold/30" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg></div>
+            <div class="p-3"><p class="text-sm text-txt-muted text-center">Admin caption</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA (guest tabs only) -->
+      <div id="guest-cta" class="text-center mt-12">
+        <p class="text-txt-muted mb-4">Want to add your own memory?</p>
+        <a href="submit-wish.html" class="bg-gold hover:bg-gold/90 text-royal-dark font-semibold px-8 py-3 rounded-pill shadow-glow transition-all duration-300 inline-flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          Share a Photo or Video
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+
+  <!-- FOOTER -->
+  <footer class="bg-royal-dark py-10 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="font-script text-gold text-2xl mb-3">Pastor Olakiitan Olaleye @ 50</p>
+      <div class="flex justify-center gap-6 mb-6 flex-wrap">
+        <a href="home.html" class="text-white/50 hover:text-gold text-sm transition-colors">Home</a>
+        <a href="submit-wish.html" class="text-white/50 hover:text-gold text-sm transition-colors">Send a Tribute</a>
+        <a href="tributes-wall.html" class="text-white/50 hover:text-gold text-sm transition-colors">Tributes</a>
+      </div>
+      <div class="gold-divider max-w-xs mx-auto mb-6"></div>
+      <p class="text-white/30 text-xs">Made with love for Pastor Olakiitan Olaleye's 50th birthday</p>
+    </div>
+  </footer>
+
+  <script>
+    function switchGallery(tab){
+      document.querySelectorAll('.gallery-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('[id^="gtab-"]').forEach(t=>{t.className=t.className.replace('tab-active','tab-inactive')});
+      document.getElementById('gpanel-'+tab).classList.add('active');
+      const btn=document.getElementById('gtab-'+tab);
+      btn.className=btn.className.replace('tab-inactive','tab-active');
+      document.getElementById('guest-cta').style.display=tab==='laitan'?'none':'block';
+    }
+  </script>
+</body>
+</html>
