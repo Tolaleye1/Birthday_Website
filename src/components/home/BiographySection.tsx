@@ -38,7 +38,7 @@ export default function BiographySection() {
           />
 
           <Link
-            href="/#biography"
+            href="/about"
             className="mt-4 bg-gold hover:bg-gold/90 text-purple-deep font-semibold text-sm inline-flex items-center gap-2 px-6 py-2.5 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all"
           >
             Read More About Olakiitan
