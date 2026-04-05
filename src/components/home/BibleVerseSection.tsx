@@ -16,10 +16,10 @@ export default function BibleVerseSection() {
           className="uppercase tracking-[0.3em] text-xs font-semibold text-gold mb-6"
           style={{ fontVariant: "small-caps" }}
         >
-          Isaiah 60:1 NLT
+          Isaiah 60:1 NIV
         </p>
         <blockquote className="font-[family-name:var(--font-display)] text-2xl md:text-4xl font-normal italic text-white/95 leading-snug mb-0">
-          &ldquo;Arise, Jerusalem! Let your light shine for all to see. For the glory of the LORD rises to shine on you.&rdquo;
+          &ldquo;Arise, shine, for your light has come, and the glory of the LORD rises upon you.&rdquo;
         </blockquote>
       </div>
     </section>
