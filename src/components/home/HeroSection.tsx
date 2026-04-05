@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
@@ -15,14 +16,16 @@ export default function HeroSection() {
           Celebrating a Golden Legacy of Impact
         </p>
 
-        {/* Portrait Placeholder */}
-        <div className="animate-[fadeUp_0.8s_ease-out_0.2s_both] mx-auto w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-gold/40 shadow-[var(--shadow-glow)] mb-8 overflow-hidden bg-gradient-to-br from-purple-light to-berry flex items-center justify-center">
-          <div className="text-center">
-            <svg className="w-14 h-14 text-white/30 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
-            <p className="text-white/40 text-xs mt-1">Photo</p>
-          </div>
+        {/* Portrait */}
+        <div className="animate-[fadeUp_0.8s_ease-out_0.2s_both] mx-auto w-40 h-40 md:w-52 md:h-52 rounded-full border-4 border-gold/40 shadow-[var(--shadow-glow)] mb-8 overflow-hidden">
+          <Image
+            src="/Olakiitan.jpg"
+            alt="Pastor Olakiitan Olaleye"
+            width={208}
+            height={208}
+            className="w-full h-full object-cover"
+            priority
+          />
         </div>
 
         {/* Celebrant Name */}
