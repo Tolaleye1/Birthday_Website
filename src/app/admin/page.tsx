@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createClient } from "@/lib/supabase/client";
-import type { Contribution, LaitanPhoto } from "@/lib/types";
+import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type AdminTab = "all" | "text" | "photo" | "video";
 
@@ -12,11 +12,12 @@ export default function AdminPage() {
   const [email, setEmail] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
   const [isAuthed, setIsAuthed] = useState(false);
-  const [loginSent, setLoginSent] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<AdminTab>("all");
   const [contributions, setContributions] = useState<Contribution[]>([]);
-  const [laitanPhotos, setLaitanPhotos] = useState<LaitanPhoto[]>([]);
+  const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
   const laitanFileRef = useRef<HTMLInputElement>(null);
   const [laitanCaption, setLaitanCaption] = useState("");
@@ -27,10 +28,10 @@ export default function AdminPage() {
   const loadData = useCallback(async () => {
     const [contribRes, laitanRes] = await Promise.all([
       supabase.from("contributions").select("*").eq("is_deleted", false).order("created_at", { ascending: false }),
-      supabase.from("laitan_photos").select("*").order("display_order", { ascending: true }),
+      supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
     ]);
     setContributions((contribRes.data as Contribution[]) || []);
-    setLaitanPhotos((laitanRes.data as LaitanPhoto[]) || []);
+    setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
   }, [supabase]);
 
   // Check auth
@@ -46,17 +47,22 @@ export default function AdminPage() {
     checkAuth();
   }, [supabase, loadData]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  // Amendment 7: Request access instead of direct magic link
+  const handleRequestAccess = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
+    setSubmitting(true);
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: { emailRedirectTo: `${window.location.origin}/admin` },
+      const res = await fetch("/api/admin-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
       });
-      if (error) { setLoginError(error.message); return; }
-      setLoginSent(true);
-    } catch { setLoginError("Failed to send magic link."); }
+      const data = await res.json();
+      if (!res.ok) { setLoginError(data.error); setSubmitting(false); return; }
+      setRequestSent(true);
+    } catch { setLoginError("Failed to submit request."); }
+    setSubmitting(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -77,7 +83,7 @@ export default function AdminPage() {
     setLaitanUploading(true);
     try {
       // Get signed URL
-      const res = await fetch("/api/laitan-photos", {
+      const res = await fetch("/api/laitan-gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ caption: laitanCaption, fileName: file.name, mimeType: file.type, fileSize: file.size }),
@@ -89,10 +95,10 @@ export default function AdminPage() {
       await fetch(data.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
 
       // Confirm
-      await fetch("/api/laitan-photos", {
+      await fetch("/api/laitan-gallery", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assetPath: data.assetPath, caption: laitanCaption }),
+        body: JSON.stringify({ assetPath: data.assetPath, caption: laitanCaption, mediaType: data.mediaType }),
       });
 
       setLaitanCaption("");
@@ -102,11 +108,11 @@ export default function AdminPage() {
     setLaitanUploading(false);
   };
 
-  const handleDeleteLaitan = async (photo: LaitanPhoto) => {
-    if (!confirm("Delete this photo?")) return;
+  const handleDeleteLaitan = async (item: LaitanGalleryItem) => {
+    if (!confirm("Delete this item?")) return;
     try {
-      await supabase.storage.from("media").remove([photo.asset_path]);
-      await supabase.from("laitan_photos").delete().eq("id", photo.id);
+      await supabase.storage.from("media").remove([item.asset_path]);
+      await supabase.from("laitan_gallery").delete().eq("id", item.id);
       loadData();
     } catch { /* ignore */ }
   };
@@ -133,26 +139,27 @@ export default function AdminPage() {
           </section>
           <section className="py-20 px-4">
             <div className="max-w-sm mx-auto">
-              {loginSent ? (
+              {requestSent ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-green-100 mx-auto mb-4 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+                  <div className="w-16 h-16 rounded-full bg-gold-glow mx-auto mb-4 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </div>
-                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">Check your email</h2>
-                  <p className="text-text-muted text-sm">We sent a magic link to <strong>{email}</strong>. Click it to sign in.</p>
+                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">Access Request Sent</h2>
+                  <p className="text-text-muted text-sm">Your request has been submitted. You&apos;ll receive an email if your request is approved.</p>
                 </div>
               ) : (
                 <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-8">
-                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-4 text-center">Admin Login</h2>
-                  <form onSubmit={handleLogin} className="space-y-4">
+                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-4 text-center">Admin Access</h2>
+                  <p className="text-text-muted text-sm text-center mb-6">Enter your email to request admin access. The site owner will review your request.</p>
+                  <form onSubmit={handleRequestAccess} className="space-y-4">
                     <div>
                       <label htmlFor="admin-email" className="block text-sm font-semibold text-text-dark mb-2">Email Address</label>
-                      <input id="admin-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="admin@example.com"
+                      <input id="admin-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
                         className="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-text-body placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all" />
                     </div>
                     {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
-                    <button type="submit" className="w-full bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold py-3 rounded-[var(--radius-pill)] transition-all">
-                      Send Magic Link
+                    <button type="submit" disabled={submitting} className="w-full bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold py-3 rounded-[var(--radius-pill)] transition-all disabled:opacity-50">
+                      {submitting ? "Submitting..." : "Request Access"}
                     </button>
                   </form>
                 </div>
@@ -237,38 +244,45 @@ export default function AdminPage() {
               )}
             </div>
 
-            {/* Laitan's Photos Management */}
+            {/* Laitan's Gallery Management */}
             <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-6 md:p-8">
               <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-6 flex items-center gap-2">
                 <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>
-                Laitan&apos;s Photos
+                Laitan&apos;s Gallery
               </h2>
-              <p className="text-text-muted text-sm mb-6">These photos appear on the Home page (&quot;Laitan Throughout the Years&quot;) and Gallery (&quot;Laitan&apos;s Photos&quot; tab).</p>
+              <p className="text-text-muted text-sm mb-6">Upload photos and videos. These appear on the Home page (&quot;Laitan Throughout the Years&quot;) and Gallery (&quot;Laitan&apos;s Gallery&quot; tab).</p>
 
               {/* Upload form */}
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 <input type="text" value={laitanCaption} onChange={(e) => setLaitanCaption(e.target.value)} placeholder="Caption (optional)"
                   className="flex-1 px-4 py-2 rounded-xl border border-gold-light/60 bg-ivory text-text-body text-sm placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20" />
-                <input ref={laitanFileRef} type="file" accept="image/jpeg,image/png,image/webp" className="text-sm file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gold file:text-purple-deep file:font-semibold file:text-sm" />
+                <input ref={laitanFileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" className="text-sm file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gold file:text-purple-deep file:font-semibold file:text-sm" />
                 <button onClick={handleLaitanUpload} disabled={laitanUploading}
                   className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-6 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50">
                   {laitanUploading ? "Uploading..." : "Upload"}
                 </button>
               </div>
 
-              {/* Photo Grid */}
-              {laitanPhotos.length > 0 && (
+              {/* Gallery Grid */}
+              {laitanItems.length > 0 && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {laitanPhotos.map((photo) => (
-                    <div key={photo.id} className="relative group rounded-[var(--radius-card)] overflow-hidden shadow-[var(--shadow-card)]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={photo.asset_url || ""} alt={photo.caption || ""} className="w-full aspect-square object-cover" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <button onClick={() => handleDeleteLaitan(photo)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-[var(--radius-pill)] text-xs font-semibold transition-all">Delete</button>
+                  {laitanItems.map((item) => (
+                    <div key={item.id} className="relative group rounded-[var(--radius-card)] overflow-hidden shadow-[var(--shadow-card)]">
+                      {item.media_type === "video" ? (
+                        <video src={item.asset_url || ""} className="w-full aspect-square object-cover" preload="metadata" muted />
+                      ) : (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={item.asset_url || ""} alt={item.caption || ""} className="w-full aspect-square object-cover" />
+                      )}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <button onClick={() => handleDeleteLaitan(item)} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-[var(--radius-pill)] text-xs font-semibold transition-all">Delete</button>
                       </div>
-                      {photo.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                          <p className="text-white text-xs truncate">{photo.caption}</p>
+                      {(item.caption || item.media_type === "video") && (
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 flex items-center gap-1">
+                          {item.media_type === "video" && (
+                            <svg className="w-3 h-3 text-white shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                          )}
+                          {item.caption && <p className="text-white text-xs truncate">{item.caption}</p>}
                         </div>
                       )}
                     </div>

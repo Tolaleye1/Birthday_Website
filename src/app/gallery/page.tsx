@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createClient } from "@/lib/supabase/client";
-import type { Contribution, LaitanPhoto } from "@/lib/types";
+import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type GalleryTab = "videos" | "photos" | "laitan";
 
@@ -12,7 +12,7 @@ export default function GalleryPage() {
   const [tab, setTab] = useState<GalleryTab>("videos");
   const [videos, setVideos] = useState<Contribution[]>([]);
   const [photos, setPhotos] = useState<Contribution[]>([]);
-  const [laitanPhotos, setLaitanPhotos] = useState<LaitanPhoto[]>([]);
+  const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,11 +21,11 @@ export default function GalleryPage() {
       const [videoRes, photoRes, laitanRes] = await Promise.all([
         supabase.from("contributions").select("*").eq("type", "video").eq("is_deleted", false).order("created_at", { ascending: false }),
         supabase.from("contributions").select("*").eq("type", "photo").eq("is_deleted", false).order("created_at", { ascending: false }),
-        supabase.from("laitan_photos").select("*").order("display_order", { ascending: true }),
+        supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
       ]);
       setVideos((videoRes.data as Contribution[]) || []);
       setPhotos((photoRes.data as Contribution[]) || []);
-      setLaitanPhotos((laitanRes.data as LaitanPhoto[]) || []);
+      setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
       setLoading(false);
     }
     load();
@@ -48,7 +48,7 @@ export default function GalleryPage() {
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" /></svg>,
     },
     {
-      key: "laitan", label: "Laitan's Photos",
+      key: "laitan", label: "Laitan's Gallery",
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>,
     },
   ];
@@ -79,14 +79,14 @@ export default function GalleryPage() {
 
         <section className="py-12 md:py-20 px-4">
           <div className="max-w-6xl mx-auto">
-            {/* Tab Switcher */}
-            <div className="flex justify-center mb-10">
-              <div className="bg-white rounded-[var(--radius-pill)] shadow-[var(--shadow-card)] p-1 inline-flex gap-1">
+            {/* Tab Switcher — Amendment 10: mobile overflow fix */}
+            <div className="flex justify-center mb-10 overflow-x-auto -mx-4 px-4">
+              <div className="bg-white rounded-[var(--radius-pill)] shadow-[var(--shadow-card)] p-1 inline-flex gap-1 flex-nowrap min-w-0">
                 {tabConfig.map((t) => (
                   <button key={t.key} onClick={() => setTab(t.key)}
-                    className={`px-6 md:px-8 py-2.5 rounded-[var(--radius-pill)] text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${tab === t.key ? "bg-purple-primary text-white shadow-md" : "text-text-muted hover:text-text-dark"}`}>
+                    className={`px-4 sm:px-6 md:px-8 py-2.5 rounded-[var(--radius-pill)] text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 ${tab === t.key ? "bg-purple-primary text-white shadow-md" : "text-text-muted hover:text-text-dark"}`}>
                     {t.icon} {t.label}
-                    {t.count !== undefined && <span className={`px-2 py-0.5 rounded-full text-xs ml-1 ${tab === t.key ? "bg-white/20" : "bg-gold/10 text-gold"}`}>{t.count}</span>}
+                    {t.count !== undefined && <span className={`px-1.5 py-0.5 rounded-full text-xs ${tab === t.key ? "bg-white/20" : "bg-gold/10 text-gold"}`}>{t.count}</span>}
                   </button>
                 ))}
               </div>
@@ -141,22 +141,33 @@ export default function GalleryPage() {
                   </div>
                 )}
 
-                {/* Laitan's Photos Tab */}
+                {/* Laitan's Gallery Tab */}
                 {tab === "laitan" && (
                   <div>
                     <div className="text-center mb-8">
                       <p className="text-text-muted">A personal collection curated by the host</p>
                     </div>
-                    {laitanPhotos.length === 0 ? <EmptyState type="photos" /> : (
+                    {laitanItems.length === 0 ? <EmptyState type="media" /> : (
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {laitanPhotos.map((p) => (
-                          <div key={p.id} className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
+                        {laitanItems.map((item) => (
+                          <div key={item.id} className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
                             <div className="aspect-square relative">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={p.asset_url || ""} alt={p.caption || "Laitan's photo"} className="w-full h-full object-cover" />
+                              {item.media_type === "video" ? (
+                                <div className="w-full h-full relative bg-purple-deep">
+                                  <video src={item.asset_url || ""} className="w-full h-full object-cover" preload="metadata" muted />
+                                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                    <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                      <svg className="w-5 h-5 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                                    </div>
+                                  </div>
+                                </div>
+                              ) : (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img src={item.asset_url || ""} alt={item.caption || "Laitan's gallery"} className="w-full h-full object-cover" />
+                              )}
                             </div>
-                            {p.caption && (
-                              <div className="p-3"><p className="text-sm text-text-muted text-center">{p.caption}</p></div>
+                            {item.caption && (
+                              <div className="p-3"><p className="text-sm text-text-muted text-center">{item.caption}</p></div>
                             )}
                           </div>
                         ))}

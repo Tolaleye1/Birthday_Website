@@ -13,7 +13,7 @@ export default function Footer() {
         <div className="flex justify-center gap-6 mb-6 flex-wrap">
           <Link href="/" className="text-white/50 hover:text-gold text-sm transition-colors">Home</Link>
           <Link href="/submit-tribute" className="text-white/50 hover:text-gold text-sm transition-colors">Send a Tribute</Link>
-          <Link href="/upload-video" className="text-white/50 hover:text-gold text-sm transition-colors">Upload Video</Link>
+          <Link href="/gift" className="text-white/50 hover:text-gold text-sm transition-colors">Gift the Celebrant</Link>
           <Link href="/gallery" className="text-white/50 hover:text-gold text-sm transition-colors">Gallery</Link>
           <Link href="/tributes" className="text-white/50 hover:text-gold text-sm transition-colors">Tributes</Link>
         </div>
@@ -21,12 +21,13 @@ export default function Footer() {
         <p className="text-white/30 text-xs">
           Made with love for the 50th birthday celebration of Pastor Olakiitan Olaleye
         </p>
-        <Link
+        {/* <Link
           href="/admin"
           className="text-white/20 hover:text-white/40 text-xs mt-2 inline-block transition-colors"
         >
           Admin
-        </Link>
+        </Link> */}
+        <p className="text-white/30 text-xs mt-2">Courtesy: Oluwatomisin Olaleye</p>
       </div>
     </footer>
   );

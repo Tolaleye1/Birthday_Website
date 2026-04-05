@@ -15,12 +15,13 @@ export interface Contribution {
   created_at: string;
 }
 
-export interface LaitanPhoto {
+export interface LaitanGalleryItem {
   id: string;
   asset_path: string;
   asset_url: string | null;
   caption: string | null;
   display_order: number;
+  media_type: "photo" | "video";
   created_at: string;
 }
 
@@ -38,6 +39,10 @@ export const ALLOWED_PHOTO_TYPES = [
   "image/png",
   "image/webp",
   "image/heic",
+];
+export const ALLOWED_GALLERY_TYPES = [
+  ...ALLOWED_PHOTO_TYPES,
+  ...ALLOWED_VIDEO_TYPES,
 ];
 
 export const ADMIN_EMAIL = "admin@olakiitan50.com";

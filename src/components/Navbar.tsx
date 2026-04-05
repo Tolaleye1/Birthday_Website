@@ -6,6 +6,8 @@ import { useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/#biography", label: "About Olakiitan" },
+  { href: "/gift", label: "Gift the Celebrant" },
   { href: "/gallery", label: "Gallery" },
   { href: "/tributes", label: "Tributes" },
 ];
@@ -68,7 +70,8 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-white/10 px-4 pb-4">
           <Link href="/" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Home</Link>
-          <Link href="/upload-video" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Upload Video</Link>
+          <Link href="/#biography" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>About Olakiitan</Link>
+          <Link href="/gift" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Gift the Celebrant</Link>
           <Link href="/submit-tribute" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Send a Tribute</Link>
           <Link href="/gallery" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Gallery</Link>
           <Link href="/tributes" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Tributes Wall</Link>

@@ -19,7 +19,7 @@ export default function HomePage() {
         <ParticipateSection />
         <RecentTributesSection />
         <BibleVerseSection />
-        <EventDetailsSection />
+        {/* <EventDetailsSection /> */}
       </main>
       <Footer />
     </>
