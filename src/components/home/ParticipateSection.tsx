@@ -47,7 +47,7 @@ export default function ParticipateSection() {
               Share a Photo
             </h3>
             <p className="text-text-muted text-sm leading-relaxed">
-              Upload a favourite photo with a short caption to add to the celebration gallery.
+              Upload a favourite photo <b>with the Celebrant and a caption</b> to add to the celebration gallery.
             </p>
           </Link>
 
