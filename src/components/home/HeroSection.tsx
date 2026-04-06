@@ -33,7 +33,7 @@ export default function HeroSection() {
           Pastor Olakiitan
         </p>
         <h1 className="animate-[fadeUp_0.8s_ease-out_0.2s_both] font-[family-name:var(--font-display)] text-4xl md:text-6xl font-extrabold text-white mb-4">
-          Olaleye at <span className="text-gold">50</span>
+          Olaleye <span className="text-gold">@ 50</span>
         </h1>
         <p className="animate-[fadeUp_0.8s_ease-out_0.4s_both] text-white/70 max-w-lg mx-auto mb-4 leading-relaxed">
           Join us in celebrating 50 years of grace, faithfulness, and a legacy that has touched lives across generations.
