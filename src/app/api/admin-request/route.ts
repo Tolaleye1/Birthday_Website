@@ -3,7 +3,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
 
 const ADMIN_NOTIFICATION_EMAIL = "olaleyetomisin15@gmail.com";
-const SITE_URL = "https://laitanat50.vercel.app";
+const SITE_URL = "https://laitan50.com";
 
 export async function POST(req: NextRequest) {
   try {
