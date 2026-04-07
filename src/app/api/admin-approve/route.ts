@@ -48,6 +48,9 @@ export async function GET(req: NextRequest) {
       const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
         type: "magiclink",
         email: request.requester_email,
+        options: {
+          redirectTo: "https://laitan50.com/admin",
+        },
       });
 
       if (linkError || !linkData) {
