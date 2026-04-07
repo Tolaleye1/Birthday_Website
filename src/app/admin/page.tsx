@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createClient } from "@/lib/supabase/client";
@@ -9,25 +9,14 @@ import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 type AdminTab = "all" | "text" | "photo" | "video";
 
 export default function AdminPage() {
-  const [email, setEmail] = useState("");
-  const [authLoading, setAuthLoading] = useState(true);
-  const [isAuthed, setIsAuthed] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
-  const [loginError, setLoginError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [tab, setTab] = useState<AdminTab>("all");
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
   const laitanFileRef = useRef<HTMLInputElement>(null);
+  const supabase = useMemo(() => createClient(), []);
   const [laitanCaption, setLaitanCaption] = useState("");
   const [laitanUploading, setLaitanUploading] = useState(false);
-  const [mode, setMode] = useState<"request" | "login">("request");
-  const [loginLinkSent, setLoginLinkSent] = useState(false);
-  const [loginLinkError, setLoginLinkError] = useState("");
-  const [loginLinkSubmitting, setLoginLinkSubmitting] = useState(false);
-
-  const supabase = createClient();
 
   const loadData = useCallback(async () => {
     const [contribRes, laitanRes] = await Promise.all([
@@ -38,54 +27,29 @@ export default function AdminPage() {
     setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
   }, [supabase]);
 
-  // Check auth
   useEffect(() => {
-    async function checkAuth() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setIsAuthed(true);
-        loadData();
+    let cancelled = false;
+
+    async function hydrateAdminData() {
+      const [contribRes, laitanRes] = await Promise.all([
+        supabase.from("contributions").select("*").eq("is_deleted", false).order("created_at", { ascending: false }),
+        supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
+      ]);
+
+      if (cancelled) {
+        return;
       }
-      setAuthLoading(false);
+
+      setContributions((contribRes.data as Contribution[]) || []);
+      setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
     }
-    checkAuth();
-  }, [supabase, loadData]);
 
-  // Request access (new users)
-  const handleRequestAccess = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError("");
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/admin-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setLoginError(data.error); setSubmitting(false); return; }
-      setRequestSent(true);
-    } catch { setLoginError("Failed to submit request."); }
-    setSubmitting(false);
-  };
+    void hydrateAdminData();
 
-  // Send login link (returning approved admins)
-  const handleSendLoginLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginLinkError("");
-    setLoginLinkSubmitting(true);
-    try {
-      const res = await fetch("/api/admin-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setLoginLinkError(data.error); setLoginLinkSubmitting(false); return; }
-      setLoginLinkSent(true);
-    } catch { setLoginLinkError("Failed to send login link."); }
-    setLoginLinkSubmitting(false);
-  };
+    return () => {
+      cancelled = true;
+    };
+  }, [supabase]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this submission?")) return;
@@ -139,101 +103,6 @@ export default function AdminPage() {
     } catch { /* ignore */ }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsAuthed(false);
-  };
-
-  if (authLoading) {
-    return (
-      <><Navbar /><main className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" /></main><Footer /></>
-    );
-  }
-
-  if (!isAuthed) {
-    return (
-      <>
-        <Navbar />
-        <main>
-          <section className="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
-            <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-bold text-white">Admin Dashboard</h1>
-            <div className="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0" /></svg></div>
-          </section>
-          <section className="py-20 px-4">
-            <div className="max-w-sm mx-auto">
-              {requestSent ? (
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-gold-glow mx-auto mb-4 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  </div>
-                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">Access Request Sent</h2>
-                  <p className="text-text-muted text-sm">Your request has been submitted. You&apos;ll receive an email if your request is approved.</p>
-                </div>
-              ) : loginLinkSent ? (
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full bg-gold-glow mx-auto mb-4 flex items-center justify-center">
-                    <svg className="w-8 h-8 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
-                  </div>
-                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">Login Link Sent!</h2>
-                  <p className="text-text-muted text-sm">Check your email for a link to sign in.</p>
-                </div>
-              ) : (
-                <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-8">
-                  {/* Mode toggle */}
-                  <div className="flex rounded-xl bg-ivory border border-gold-light/30 p-1 mb-6">
-                    <button type="button" onClick={() => { setMode("request"); setLoginError(""); setLoginLinkError(""); }}
-                      className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${mode === "request" ? "bg-purple-primary text-white shadow-sm" : "text-text-muted hover:text-text-dark"}`}>
-                      New User
-                    </button>
-                    <button type="button" onClick={() => { setMode("login"); setLoginError(""); setLoginLinkError(""); }}
-                      className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${mode === "login" ? "bg-purple-primary text-white shadow-sm" : "text-text-muted hover:text-text-dark"}`}>
-                      Returning Admin
-                    </button>
-                  </div>
-
-                  {mode === "request" ? (
-                    <>
-                      <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-4 text-center">Request Access</h2>
-                      <p className="text-text-muted text-sm text-center mb-6">Enter your email to request admin access. The site owner will review your request.</p>
-                      <form onSubmit={handleRequestAccess} className="space-y-4">
-                        <div>
-                          <label htmlFor="admin-email" className="block text-sm font-semibold text-text-dark mb-2">Email Address</label>
-                          <input id="admin-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
-                            className="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-text-body placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all" />
-                        </div>
-                        {loginError && <p className="text-red-600 text-sm">{loginError}</p>}
-                        <button type="submit" disabled={submitting} className="w-full bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold py-3 rounded-[var(--radius-pill)] transition-all disabled:opacity-50">
-                          {submitting ? "Submitting..." : "Request Access"}
-                        </button>
-                      </form>
-                    </>
-                  ) : (
-                    <>
-                      <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-4 text-center">Send Me a Login Link</h2>
-                      <p className="text-text-muted text-sm text-center mb-6">Already approved? Enter your email to receive a fresh login link.</p>
-                      <form onSubmit={handleSendLoginLink} className="space-y-4">
-                        <div>
-                          <label htmlFor="login-email" className="block text-sm font-semibold text-text-dark mb-2">Email Address</label>
-                          <input id="login-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
-                            className="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-text-body placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all" />
-                        </div>
-                        {loginLinkError && <p className="text-red-600 text-sm">{loginLinkError}</p>}
-                        <button type="submit" disabled={loginLinkSubmitting} className="w-full bg-gold hover:bg-gold/90 text-purple-deep font-semibold py-3 rounded-[var(--radius-pill)] transition-all disabled:opacity-50">
-                          {loginLinkSubmitting ? "Sending..." : "Send Login Link"}
-                        </button>
-                      </form>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </section>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
   // Filter contributions
   const filtered = tab === "all" ? contributions : contributions.filter((c) => c.type === tab);
 
@@ -247,7 +116,7 @@ export default function AdminPage() {
               <h1 className="font-[family-name:var(--font-display)] text-2xl md:text-4xl font-bold text-white">Admin Dashboard</h1>
               <p className="text-white/50 text-sm mt-1">{contributions.length} submissions</p>
             </div>
-            <button onClick={handleLogout} className="text-white/60 hover:text-white text-sm transition-colors">Sign Out</button>
+            <p className="text-white/60 text-sm">Open access enabled</p>
           </div>
           <div className="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0" /></svg></div>
         </section>
