@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -103,7 +104,8 @@ export default function SubmitTributePage() {
           durationSeconds: tab === "video" ? duration : undefined,
         }),
       });
-      if (!confirmRes.ok) { setError("Failed to save."); setSubmitting(false); return; }
+      const confirmData = await confirmRes.json();
+      if (!confirmRes.ok) { setError(confirmData.error || "Failed to save."); setSubmitting(false); return; }
       setProgress(100);
       setSuccess(true);
     } catch { setError("Something went wrong."); } finally { setSubmitting(false); }
@@ -125,7 +127,7 @@ export default function SubmitTributePage() {
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-text-dark mb-4">Thank you for your tribute!</h2>
             <p className="text-text-muted mb-8">Your {tab === "text" ? "message" : tab} has been submitted successfully.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all">Back to Home</a>
+              <Link href="/" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all">Back to Home</Link>
               <button onClick={() => { setSuccess(false); resetForm(); }} className="border-2 border-purple-primary text-purple-primary hover:bg-purple-primary hover:text-white font-semibold px-8 py-3 rounded-[var(--radius-pill)] transition-all">Send Another</button>
             </div>
           </section>

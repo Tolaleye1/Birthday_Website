@@ -2,6 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { ALLOWED_GALLERY_TYPES, MAX_PHOTO_SIZE_BYTES, MAX_VIDEO_SIZE_BYTES, ALLOWED_PHOTO_TYPES } from "@/lib/types";
 
+export async function GET() {
+  try {
+    const supabase = createServerClient();
+    const { data, error } = await supabase
+      .from("laitan_gallery")
+      .select("*")
+      .order("display_order", { ascending: true });
+
+    if (error) {
+      console.error("Laitan gallery fetch error:", error);
+      return NextResponse.json({ error: "Failed to load gallery items." }, { status: 500 });
+    }
+
+    return NextResponse.json({ items: data ?? [] });
+  } catch (err) {
+    console.error("Laitan gallery GET error:", err);
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+  }
+}
+
 /** Admin: upload a Laitan gallery item (photo or video) */
 export async function POST(req: NextRequest) {
   try {
@@ -85,6 +105,54 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ success: true, item: data }, { status: 201 });
   } catch (err) {
     console.error("Laitan gallery confirm error:", err);
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+  }
+}
+
+/** Admin: delete a Laitan gallery item and its stored file */
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Item id is required." }, { status: 400 });
+    }
+
+    const supabase = createServerClient();
+    const { data: item, error: fetchError } = await supabase
+      .from("laitan_gallery")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !item) {
+      return NextResponse.json({ error: "Gallery item not found." }, { status: 404 });
+    }
+
+    if (item.asset_path) {
+      const { error: storageError } = await supabase.storage
+        .from("media")
+        .remove([item.asset_path]);
+
+      if (storageError) {
+        console.error("Laitan gallery storage delete error:", storageError);
+      }
+    }
+
+    const { error: deleteError } = await supabase
+      .from("laitan_gallery")
+      .delete()
+      .eq("id", id);
+
+    if (deleteError) {
+      console.error("Laitan gallery delete error:", deleteError);
+      return NextResponse.json({ error: "Failed to delete gallery item." }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Laitan gallery DELETE error:", err);
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }

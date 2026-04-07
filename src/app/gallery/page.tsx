@@ -1,41 +1,69 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { createClient } from "@/lib/supabase/client";
 import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type GalleryTab = "videos" | "photos" | "laitan";
 
+function EmptyState({ type }: { type: string }) {
+  return (
+    <div className="text-center py-16">
+      <div className="w-20 h-20 rounded-full bg-blush-light mx-auto mb-6 flex items-center justify-center">
+        <svg className="w-10 h-10 text-text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" /></svg>
+      </div>
+      <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">No {type} yet</h3>
+      <p className="text-text-muted text-sm">Be the first to share!</p>
+    </div>
+  );
+}
+
 export default function GalleryPage() {
-  const [tab, setTab] = useState<GalleryTab>("videos");
+  const [tab, setTab] = useState<GalleryTab>(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#laitan-photos") {
+      return "laitan";
+    }
+
+    return "videos";
+  });
   const [videos, setVideos] = useState<Contribution[]>([]);
   const [photos, setPhotos] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
     async function load() {
-      const [videoRes, photoRes, laitanRes] = await Promise.all([
-        supabase.from("contributions").select("*").eq("type", "video").eq("is_deleted", false).order("created_at", { ascending: false }),
-        supabase.from("contributions").select("*").eq("type", "photo").eq("is_deleted", false).order("created_at", { ascending: false }),
-        supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
-      ]);
-      setVideos((videoRes.data as Contribution[]) || []);
-      setPhotos((photoRes.data as Contribution[]) || []);
-      setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
-      setLoading(false);
-    }
-    load();
-  }, []);
+      try {
+        const [videoRes, photoRes, laitanRes] = await Promise.all([
+          fetch("/api/tributes?type=video"),
+          fetch("/api/tributes?type=photo"),
+          fetch("/api/laitan-gallery"),
+        ]);
 
-  // Check URL hash for laitan-photos tab
-  useEffect(() => {
-    if (window.location.hash === "#laitan-photos") {
-      setTab("laitan");
+        const [videoData, photoData, laitanData] = await Promise.all([
+          videoRes.json(),
+          photoRes.json(),
+          laitanRes.json(),
+        ]);
+
+        if (videoRes.ok) {
+          setVideos((videoData.contributions as Contribution[]) || []);
+        }
+
+        if (photoRes.ok) {
+          setPhotos((photoData.contributions as Contribution[]) || []);
+        }
+
+        if (laitanRes.ok) {
+          setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
+        }
+      } finally {
+        setLoading(false);
+      }
     }
+    void load();
   }, []);
 
   const tabConfig: { key: GalleryTab; label: string; count?: number; icon: React.ReactNode }[] = [
@@ -52,18 +80,6 @@ export default function GalleryPage() {
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>,
     },
   ];
-
-  function EmptyState({ type }: { type: string }) {
-    return (
-      <div className="text-center py-16">
-        <div className="w-20 h-20 rounded-full bg-blush-light mx-auto mb-6 flex items-center justify-center">
-          <svg className="w-10 h-10 text-text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" /></svg>
-        </div>
-        <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">No {type} yet</h3>
-        <p className="text-text-muted text-sm">Be the first to share!</p>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -180,10 +196,10 @@ export default function GalleryPage() {
                 {tab !== "laitan" && (
                   <div className="text-center mt-12">
                     <p className="text-text-muted mb-4">Want to add your own memory?</p>
-                    <a href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
+                    <Link href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.5v15m7.5-7.5h-15" /></svg>
                       Share a Photo or Video
-                    </a>
+                    </Link>
                   </div>
                 )}
               </>

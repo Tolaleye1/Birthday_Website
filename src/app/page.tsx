@@ -6,7 +6,6 @@ import LaitanYearsSection from "@/components/home/LaitanYearsSection";
 import ParticipateSection from "@/components/home/ParticipateSection";
 import RecentTributesSection from "@/components/home/RecentTributesSection";
 import BibleVerseSection from "@/components/home/BibleVerseSection";
-import EventDetailsSection from "@/components/home/EventDetailsSection";
 
 export default function HomePage() {
   return (

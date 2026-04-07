@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { createClient } from "@/lib/supabase/client";
 import type { Contribution } from "@/lib/types";
 
 function getInitials(name: string) {
@@ -29,18 +29,18 @@ export default function TributesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
     async function load() {
-      const { data } = await supabase
-        .from("contributions")
-        .select("*")
-        .eq("type", "text")
-        .eq("is_deleted", false)
-        .order("created_at", { ascending: false });
-      setTributes((data as Contribution[]) || []);
-      setLoading(false);
+      try {
+        const res = await fetch("/api/tributes?type=text");
+        const data = await res.json();
+        if (res.ok) {
+          setTributes((data.contributions as Contribution[]) || []);
+        }
+      } finally {
+        setLoading(false);
+      }
     }
-    load();
+    void load();
   }, []);
 
   return (
@@ -70,9 +70,9 @@ export default function TributesPage() {
                 </div>
                 <h3 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-2">No tributes yet</h3>
                 <p className="text-text-muted text-sm mb-6">Be the first to share a heartfelt message!</p>
-                <a href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
+                <Link href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
                   Send a Tribute
-                </a>
+                </Link>
               </div>
             ) : (
               <>
@@ -102,10 +102,10 @@ export default function TributesPage() {
                 {/* CTA */}
                 <div className="text-center mt-12">
                   <p className="text-text-muted mb-4">Want to add your voice?</p>
-                  <a href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
+                  <Link href="/submit-tribute" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
                     Send a Tribute
-                  </a>
+                  </Link>
                 </div>
               </>
             )}

@@ -8,10 +8,46 @@ import {
   MAX_VIDEO_DURATION_SECONDS,
 } from "@/lib/types";
 
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type");
+    const limit = searchParams.get("limit");
+    const parsedLimit = limit ? Number(limit) : null;
+
+    const supabase = createServerClient();
+    let query = supabase
+      .from("contributions")
+      .select("*")
+      .eq("is_deleted", false)
+      .order("created_at", { ascending: false });
+
+    if (type && ["text", "photo", "video"].includes(type)) {
+      query = query.eq("type", type);
+    }
+
+    if (parsedLimit && Number.isFinite(parsedLimit) && parsedLimit > 0) {
+      query = query.limit(parsedLimit);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Contributions fetch error:", error);
+      return NextResponse.json({ error: "Failed to load contributions." }, { status: 500 });
+    }
+
+    return NextResponse.json({ contributions: data ?? [] });
+  } catch (err) {
+    console.error("Contributions GET error:", err);
+    return NextResponse.json({ error: "Internal server error." }, { status: 500 });
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { type, submitterName, message, caption, fileName, mimeType, fileSize, durationSeconds } = body;
+    const { type, submitterName, message, fileName, mimeType, fileSize, durationSeconds } = body;
 
     // Validate required fields
     if (!type || !submitterName?.trim()) {

@@ -2,6 +2,51 @@ import Link from "next/link";
 import { createServerClient } from "@/lib/supabase/server";
 import type { Contribution } from "@/lib/types";
 
+const placeholderTributes: Contribution[] = [
+  {
+    id: "p1",
+    type: "text",
+    submitter_name: "Funke Adeyemi",
+    message: '"Happy golden jubilee, Pastor! Your counselling changed my family. We love and celebrate you."',
+    caption: null,
+    asset_path: null,
+    asset_url: null,
+    asset_mime_type: null,
+    asset_size_bytes: null,
+    video_duration_seconds: null,
+    is_deleted: false,
+    created_at: "2026-04-07T10:00:00.000Z",
+  },
+  {
+    id: "p2",
+    type: "text",
+    submitter_name: "Kunle Ogunbiyi",
+    message: '"Praying for continued strength and grace upon your life. You are a blessing, Mummy!"',
+    caption: null,
+    asset_path: null,
+    asset_url: null,
+    asset_mime_type: null,
+    asset_size_bytes: null,
+    video_duration_seconds: null,
+    is_deleted: false,
+    created_at: "2026-04-07T07:00:00.000Z",
+  },
+  {
+    id: "p3",
+    type: "text",
+    submitter_name: "Brother Ade",
+    message: '"50 looks glorious on you, Pastor! Thank you for decades of kindness and unwavering faith."',
+    caption: null,
+    asset_path: null,
+    asset_url: null,
+    asset_mime_type: null,
+    asset_size_bytes: null,
+    video_duration_seconds: null,
+    is_deleted: false,
+    created_at: "2026-04-06T12:00:00.000Z",
+  },
+];
+
 async function getRecentTributes(): Promise<Contribution[]> {
   try {
     const supabase = createServerClient();
@@ -23,12 +68,11 @@ function getInitials(name: string) {
 }
 
 function getTimeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  if (hours < 1) return "Just now";
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  const days = Math.floor(hours / 24);
-  return `${days} day${days > 1 ? "s" : ""} ago`;
+  return new Date(dateStr).toLocaleDateString("en-NG", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 const avatarColors = ["bg-purple-primary", "bg-berry", "bg-gold"];
@@ -36,12 +80,7 @@ const avatarColors = ["bg-purple-primary", "bg-berry", "bg-gold"];
 export default async function RecentTributesSection() {
   const tributes = await getRecentTributes();
 
-  // Placeholder tributes if no real ones exist yet
-  const displayTributes = tributes.length > 0 ? tributes : [
-    { id: "p1", submitter_name: "Funke Adeyemi", message: '"Happy golden jubilee, Pastor! Your counselling changed my family. We love and celebrate you."', created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
-    { id: "p2", submitter_name: "Kunle Ogunbiyi", message: '"Praying for continued strength and grace upon your life. You are a blessing, Mummy!"', created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString() },
-    { id: "p3", submitter_name: "Brother Ade", message: '"50 looks glorious on you, Pastor! Thank you for decades of kindness and unwavering faith."', created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() },
-  ];
+  const displayTributes = tributes.length > 0 ? tributes : placeholderTributes;
 
   return (
     <section className="py-16 md:py-20 px-4">

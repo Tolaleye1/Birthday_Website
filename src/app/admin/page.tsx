@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { createClient } from "@/lib/supabase/client";
 import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type AdminTab = "all" | "text" | "photo" | "video";
@@ -14,34 +13,64 @@ export default function AdminPage() {
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
   const laitanFileRef = useRef<HTMLInputElement>(null);
-  const supabase = useMemo(() => createClient(), []);
   const [laitanCaption, setLaitanCaption] = useState("");
   const [laitanUploading, setLaitanUploading] = useState(false);
 
   const loadData = useCallback(async () => {
     const [contribRes, laitanRes] = await Promise.all([
-      supabase.from("contributions").select("*").eq("is_deleted", false).order("created_at", { ascending: false }),
-      supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
+      fetch("/api/tributes"),
+      fetch("/api/laitan-gallery"),
     ]);
-    setContributions((contribRes.data as Contribution[]) || []);
-    setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
-  }, [supabase]);
+
+    const [contribData, laitanData] = await Promise.all([
+      contribRes.json(),
+      laitanRes.json(),
+    ]);
+
+    if (!contribRes.ok) {
+      throw new Error(contribData.error || "Failed to load contributions.");
+    }
+
+    if (!laitanRes.ok) {
+      throw new Error(laitanData.error || "Failed to load Laitan gallery.");
+    }
+
+    setContributions((contribData.contributions as Contribution[]) || []);
+    setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function hydrateAdminData() {
-      const [contribRes, laitanRes] = await Promise.all([
-        supabase.from("contributions").select("*").eq("is_deleted", false).order("created_at", { ascending: false }),
-        supabase.from("laitan_gallery").select("*").order("display_order", { ascending: true }),
-      ]);
+      try {
+        const [contribRes, laitanRes] = await Promise.all([
+          fetch("/api/tributes"),
+          fetch("/api/laitan-gallery"),
+        ]);
 
-      if (cancelled) {
-        return;
+        const [contribData, laitanData] = await Promise.all([
+          contribRes.json(),
+          laitanRes.json(),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        if (contribRes.ok) {
+          setContributions((contribData.contributions as Contribution[]) || []);
+        }
+
+        if (laitanRes.ok) {
+          setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
+        }
+      } catch {
+        if (!cancelled) {
+          setContributions([]);
+          setLaitanItems([]);
+        }
       }
-
-      setContributions((contribRes.data as Contribution[]) || []);
-      setLaitanItems((laitanRes.data as LaitanGalleryItem[]) || []);
     }
 
     void hydrateAdminData();
@@ -49,7 +78,7 @@ export default function AdminPage() {
     return () => {
       cancelled = true;
     };
-  }, [supabase]);
+  }, []);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this submission?")) return;
@@ -97,9 +126,10 @@ export default function AdminPage() {
   const handleDeleteLaitan = async (item: LaitanGalleryItem) => {
     if (!confirm("Delete this item?")) return;
     try {
-      await supabase.storage.from("media").remove([item.asset_path]);
-      await supabase.from("laitan_gallery").delete().eq("id", item.id);
-      loadData();
+      const res = await fetch(`/api/laitan-gallery?id=${item.id}`, { method: "DELETE" });
+      if (res.ok) {
+        setLaitanItems((prev) => prev.filter((entry) => entry.id !== item.id));
+      }
     } catch { /* ignore */ }
   };
 
@@ -159,7 +189,7 @@ export default function AdminPage() {
                               {c.type}
                             </span>
                           </td>
-                          <td className="p-4 text-text-muted max-w-xs truncate">{c.message || c.caption || "—"}</td>
+                          <td className="p-4 text-text-muted max-w-xs truncate">{c.message || c.caption || "-"}</td>
                           <td className="p-4 text-text-muted whitespace-nowrap">{new Date(c.created_at).toLocaleDateString()}</td>
                           <td className="p-4 text-right">
                             <button onClick={() => handleDelete(c.id)} disabled={deleting === c.id}

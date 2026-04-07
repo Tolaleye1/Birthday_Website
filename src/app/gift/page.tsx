@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -44,10 +45,10 @@ export default function GiftPage() {
               </div>
 
               <div className="gold-divider max-w-[80px] mx-auto mt-10 mb-6" />
-              <a href="/" className="text-gold hover:text-gold/80 font-semibold text-sm inline-flex items-center gap-1 transition-colors">
+              <Link href="/" className="text-gold hover:text-gold/80 font-semibold text-sm inline-flex items-center gap-1 transition-colors">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
                 Back to Home
-              </a>
+              </Link>
             </div>
             
             <p className="text-center mt-6 text-sm text-text-muted">

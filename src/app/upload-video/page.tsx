@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -104,7 +105,8 @@ export default function UploadVideoPage() {
         }),
       });
 
-      if (!confirmRes.ok) { setError("Failed to save. Please try again."); setUploading(false); return; }
+      const confirmData = await confirmRes.json();
+      if (!confirmRes.ok) { setError(confirmData.error || "Failed to save. Please try again."); setUploading(false); return; }
 
       setProgress(100);
       setSuccess(true);
@@ -135,9 +137,9 @@ export default function UploadVideoPage() {
             </div>
             <h2 className="font-[family-name:var(--font-display)] text-2xl font-bold text-text-dark mb-4">Your video has been submitted!</h2>
             <p className="text-text-muted mb-8">It will appear in the Gallery shortly. Thank you for celebrating with us.</p>
-            <a href="/" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
+            <Link href="/" className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-8 py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all inline-flex items-center gap-2">
               Back to Home
-            </a>
+            </Link>
           </section>
         </main>
         <Footer />
