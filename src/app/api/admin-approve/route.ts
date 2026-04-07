@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
       if (resend) {
         const magicLink = linkData.properties?.action_link;
         await resend.emails.send({
-          from: "Birthday Website <onboarding@resend.dev>",
+          from: "Birthday Website <noreply@laitan50.com>",
           to: request.requester_email,
           subject: "Admin Access Approved — Birthday Website",
           html: `
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
       // Send rejection email
       if (resend) {
         await resend.emails.send({
-          from: "Birthday Website <onboarding@resend.dev>",
+          from: "Birthday Website <noreply@laitan50.com>",
           to: request.requester_email,
           subject: "Admin Access Request — Birthday Website",
           html: `

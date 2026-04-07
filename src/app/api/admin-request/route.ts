@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       const rejectUrl = `${SITE_URL}/api/admin-approve?token=${request.approval_token}&action=reject`;
 
       await resend.emails.send({
-        from: "Birthday Website <onboarding@resend.dev>",
+        from: "Birthday Website <noreply@laitan50.com>",
         to: ADMIN_NOTIFICATION_EMAIL,
         subject: `Admin Access Request — ${email}`,
         html: `
