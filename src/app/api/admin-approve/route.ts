@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://laitan50.com";
+const CALLBACK_URL = `${SITE_URL}/auth/callback?next=/admin`;
+
 function htmlPage(title: string, message: string) {
   return new NextResponse(
     `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
@@ -49,7 +52,7 @@ export async function GET(req: NextRequest) {
         type: "magiclink",
         email: request.requester_email,
         options: {
-          redirectTo: "https://laitan50.com/admin",
+          redirectTo: CALLBACK_URL,
         },
       });
 

@@ -8,7 +8,10 @@ import { cookies } from "next/headers";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") || "/";
+  const next = searchParams.get("next");
+  const nextPath = next && next.startsWith("/") ? next : "/admin";
+
+  const response = NextResponse.redirect(new URL(nextPath, req.url));
 
   if (code) {
     const cookieStore = await cookies();
@@ -24,6 +27,7 @@ export async function GET(req: NextRequest) {
           setAll(cookiesToSet) {
             for (const { name, value, options } of cookiesToSet) {
               cookieStore.set(name, value, options);
+              response.cookies.set(name, value, options);
             }
           },
         },
@@ -33,7 +37,7 @@ export async function GET(req: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      return NextResponse.redirect(new URL(next, req.url));
+      return response;
     }
   }
 

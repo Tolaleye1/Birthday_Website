@@ -5,7 +5,38 @@ import { Resend } from "resend";
 // IMPORTANT: Add https://laitan50.com/auth/callback to Supabase Dashboard →
 // Authentication → URL Configuration → Redirect URLs
 
-const CALLBACK_URL = "https://laitan50.com/auth/callback?next=/admin";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://laitan50.com";
+const CALLBACK_URL = `${SITE_URL}/auth/callback?next=/admin`;
+
+async function findAuthUserByEmail(
+  supabase: ReturnType<typeof createServerClient>,
+  email: string
+) {
+  let page = 1;
+  const perPage = 200;
+
+  while (true) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
+
+    if (error) {
+      throw error;
+    }
+
+    const existingUser = data.users.find(
+      (user) => user.email?.toLowerCase() === email
+    );
+
+    if (existingUser) {
+      return existingUser;
+    }
+
+    if (data.users.length < perPage) {
+      return null;
+    }
+
+    page += 1;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,19 +54,17 @@ export async function POST(req: NextRequest) {
       .select("requester_email")
       .eq("requester_email", trimmedEmail)
       .eq("status", "approved")
-      .single();
+      .limit(1)
+      .maybeSingle();
 
     // 2. If not found in admin_requests, check if user exists in Supabase Auth
     //    (handles users approved before the admin_requests system was in place)
     let approvedEmail = request?.requester_email;
 
     if (!approvedEmail) {
-      const { data: usersData } = await supabase.auth.admin.listUsers();
-      const existingUser = usersData?.users?.find(
-        (u) => u.email?.toLowerCase() === trimmedEmail
-      );
+      const existingUser = await findAuthUserByEmail(supabase, trimmedEmail);
       if (existingUser) {
-        approvedEmail = existingUser.email!;
+        approvedEmail = existingUser.email ?? trimmedEmail;
       }
     }
 
