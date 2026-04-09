@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RecentTributesSectionClient from "@/components/home/RecentTributesSectionClient";
 import { createServerClient } from "@/lib/supabase/server";
 import type { Contribution } from "@/lib/types";
 
@@ -63,24 +64,10 @@ async function getRecentTributes(): Promise<Contribution[]> {
   }
 }
 
-function getInitials(name: string) {
-  return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
-}
-
-function getTimeAgo(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-NG", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 const avatarColors = ["bg-purple-primary", "bg-berry", "bg-gold"];
 
 export default async function RecentTributesSection() {
   const tributes = await getRecentTributes();
-
-  const displayTributes = tributes.length > 0 ? tributes : placeholderTributes;
 
   return (
     <section className="py-16 md:py-20 px-4">
@@ -94,25 +81,10 @@ export default async function RecentTributesSection() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          {displayTributes.map((tribute, i) => (
-            <div
-              key={tribute.id}
-              className="bg-gradient-to-br from-blush-light to-blush rounded-[var(--radius-card)] p-6 border border-rose/20 hover-lift"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-10 h-10 rounded-full ${avatarColors[i % 3]} flex items-center justify-center text-white font-bold text-sm`}>
-                  {getInitials(tribute.submitter_name)}
-                </div>
-                <div>
-                  <p className="font-semibold text-text-dark text-sm">{tribute.submitter_name}</p>
-                  <p className="text-xs text-text-muted">{getTimeAgo(tribute.created_at)}</p>
-                </div>
-              </div>
-              <p className="text-text-body text-sm leading-relaxed italic">{tribute.message}</p>
-            </div>
-          ))}
-        </div>
+        <RecentTributesSectionClient
+          tributes={tributes.length > 0 ? tributes : placeholderTributes}
+          avatarColors={avatarColors}
+        />
 
         <div className="text-center">
           <Link
