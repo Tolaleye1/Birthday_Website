@@ -25,6 +25,22 @@ export interface LaitanGalleryItem {
   created_at: string;
 }
 
+export interface LaitanYearSlot {
+  position: number;
+  asset_path: string | null;
+  asset_url: string | null;
+  caption: string | null;
+  updated_at: string;
+}
+
+export interface LaitanYearSlot {
+  position: number;
+  asset_path: string | null;
+  asset_url: string | null;
+  caption: string | null;
+  updated_at: string;
+}
+
 /* ── Validation Constants ── */
 export const MAX_VIDEO_DURATION_SECONDS = 90;
 export const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB

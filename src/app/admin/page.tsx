@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import type { Contribution, LaitanGalleryItem } from "@/lib/types";
+import type { Contribution, LaitanGalleryItem, LaitanYearSlot } from "@/lib/types";
 
 type AdminTab = "all" | "text" | "photo" | "video";
 
@@ -11,20 +11,26 @@ export default function AdminPage() {
   const [tab, setTab] = useState<AdminTab>("all");
   const [contributions, setContributions] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
+  const [yearSlots, setYearSlots] = useState<LaitanYearSlot[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
   const laitanFileRef = useRef<HTMLInputElement>(null);
   const [laitanCaption, setLaitanCaption] = useState("");
   const [laitanUploading, setLaitanUploading] = useState(false);
+  const [yearSlotFiles, setYearSlotFiles] = useState<Record<number, File | null>>({});
+  const [yearSlotCaptions, setYearSlotCaptions] = useState<Record<number, string>>({});
+  const [yearSlotUploading, setYearSlotUploading] = useState<Record<number, boolean>>({});
 
   const loadData = useCallback(async () => {
-    const [contribRes, laitanRes] = await Promise.all([
+    const [contribRes, laitanRes, yearsRes] = await Promise.all([
       fetch("/api/tributes"),
       fetch("/api/laitan-gallery"),
+      fetch("/api/laitan-gallery?scope=years"),
     ]);
 
-    const [contribData, laitanData] = await Promise.all([
+    const [contribData, laitanData, yearsData] = await Promise.all([
       contribRes.json(),
       laitanRes.json(),
+      yearsRes.json(),
     ]);
 
     if (!contribRes.ok) {
@@ -35,8 +41,18 @@ export default function AdminPage() {
       throw new Error(laitanData.error || "Failed to load Laitan gallery.");
     }
 
+    if (!yearsRes.ok) {
+      throw new Error(yearsData.error || "Failed to load Laitan Over the Years slots.");
+    }
+
     setContributions((contribData.contributions as Contribution[]) || []);
     setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
+    setYearSlots((yearsData.slots as LaitanYearSlot[]) || []);
+    setYearSlotCaptions(
+      Object.fromEntries(
+        ((yearsData.slots as LaitanYearSlot[]) || []).map((slot) => [slot.position, slot.caption || ""])
+      )
+    );
   }, []);
 
   useEffect(() => {
@@ -44,14 +60,16 @@ export default function AdminPage() {
 
     async function hydrateAdminData() {
       try {
-        const [contribRes, laitanRes] = await Promise.all([
+        const [contribRes, laitanRes, yearsRes] = await Promise.all([
           fetch("/api/tributes"),
           fetch("/api/laitan-gallery"),
+          fetch("/api/laitan-gallery?scope=years"),
         ]);
 
-        const [contribData, laitanData] = await Promise.all([
+        const [contribData, laitanData, yearsData] = await Promise.all([
           contribRes.json(),
           laitanRes.json(),
+          yearsRes.json(),
         ]);
 
         if (cancelled) {
@@ -65,10 +83,19 @@ export default function AdminPage() {
         if (laitanRes.ok) {
           setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
         }
+
+        if (yearsRes.ok) {
+          const slots = (yearsData.slots as LaitanYearSlot[]) || [];
+          setYearSlots(slots);
+          setYearSlotCaptions(
+            Object.fromEntries(slots.map((slot) => [slot.position, slot.caption || ""]))
+          );
+        }
       } catch {
         if (!cancelled) {
           setContributions([]);
           setLaitanItems([]);
+          setYearSlots([]);
         }
       }
     }
@@ -107,18 +134,30 @@ export default function AdminPage() {
       if (!res.ok) { alert(data.error); setLaitanUploading(false); return; }
 
       // Upload
-      await fetch(data.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      const uploadRes = await fetch(data.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      if (!uploadRes.ok) {
+        alert("Upload failed.");
+        setLaitanUploading(false);
+        return;
+      }
 
       // Confirm
-      await fetch("/api/laitan-gallery", {
+      const confirmRes = await fetch("/api/laitan-gallery", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ assetPath: data.assetPath, caption: laitanCaption, mediaType: data.mediaType }),
       });
 
+      if (!confirmRes.ok) {
+        const confirmData = await confirmRes.json();
+        alert(confirmData.error || "Failed to save item.");
+        setLaitanUploading(false);
+        return;
+      }
+
       setLaitanCaption("");
       if (laitanFileRef.current) laitanFileRef.current.value = "";
-      loadData();
+      await loadData();
     } catch { alert("Upload failed."); }
     setLaitanUploading(false);
   };
@@ -133,8 +172,93 @@ export default function AdminPage() {
     } catch { /* ignore */ }
   };
 
+  async function handleYearSlotUpload(position: number) {
+    const file = yearSlotFiles[position];
+    if (!file) {
+      alert("Please choose an image for this slot.");
+      return;
+    }
+
+    setYearSlotUploading((prev) => ({ ...prev, [position]: true }));
+
+    try {
+      const prepareRes = await fetch("/api/laitan-gallery?scope=years", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          position,
+          fileName: file.name,
+          mimeType: file.type,
+          fileSize: file.size,
+        }),
+      });
+
+      const prepareData = await prepareRes.json();
+      if (!prepareRes.ok) {
+        alert(prepareData.error || "Failed to prepare slot upload.");
+        return;
+      }
+
+      const uploadRes = await fetch(prepareData.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+
+      if (!uploadRes.ok) {
+        alert("Upload failed.");
+        return;
+      }
+
+      const confirmRes = await fetch("/api/laitan-gallery?scope=years", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          position,
+          assetPath: prepareData.assetPath,
+          caption: yearSlotCaptions[position] || "",
+        }),
+      });
+
+      const confirmData = await confirmRes.json();
+      if (!confirmRes.ok) {
+        alert(confirmData.error || "Failed to save this slot.");
+        return;
+      }
+
+      setYearSlotFiles((prev) => ({ ...prev, [position]: null }));
+      await loadData();
+    } catch {
+      alert("Upload failed.");
+    } finally {
+      setYearSlotUploading((prev) => ({ ...prev, [position]: false }));
+    }
+  }
+
+  async function handleYearSlotClear(position: number) {
+    if (!confirm(`Clear slot ${position}?`)) return;
+
+    try {
+      const res = await fetch(`/api/laitan-gallery?scope=years&position=${position}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Failed to clear the slot.");
+        return;
+      }
+
+      setYearSlotFiles((prev) => ({ ...prev, [position]: null }));
+      await loadData();
+    } catch {
+      alert("Failed to clear the slot.");
+    }
+  }
+
   // Filter contributions
   const filtered = tab === "all" ? contributions : contributions.filter((c) => c.type === tab);
+  const yearSlotMap = new Map(yearSlots.map((slot) => [slot.position, slot]));
 
   return (
     <>
@@ -205,13 +329,85 @@ export default function AdminPage() {
               )}
             </div>
 
+            {/* Run the SQL amendment in Supabase Dashboard SQL Editor if laitan_years_slots does not exist yet. */}
+            <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-6 md:p-8 mb-10">
+              <div className="flex items-start justify-between gap-4 mb-6">
+                <div>
+                  <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark">Laitan Over the Years</h2>
+                  <p className="text-text-muted text-sm mt-1">These 6 curated slots power the home page section. They are separate from the main Laitan gallery.</p>
+                </div>
+                <div className="rounded-2xl bg-gold-glow px-4 py-2 text-xs font-semibold text-purple-deep">
+                  Run SQL if needed
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                {Array.from({ length: 6 }, (_, index) => {
+                  const position = index + 1;
+                  const slot = yearSlotMap.get(position);
+
+                  return (
+                    <div key={position} className="rounded-[var(--radius-card)] border border-gold-light/30 bg-ivory/50 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <p className="text-sm font-semibold text-text-dark">Slot {position}</p>
+                        <p className="text-xs uppercase tracking-[0.14em] text-gold">{slot ? "Filled" : "Empty"}</p>
+                      </div>
+
+                      <div className={`aspect-[4/5] rounded-3xl overflow-hidden border border-gold-light/30 mb-4 ${slot?.asset_url ? "bg-white" : "bg-blush-light"}`}>
+                        {slot?.asset_url ? (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={slot.asset_url} alt={slot.caption || `Slot ${position}`} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-text-muted text-sm">No image yet</div>
+                        )}
+                      </div>
+
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          value={yearSlotCaptions[position] || ""}
+                          onChange={(event) => setYearSlotCaptions((prev) => ({ ...prev, [position]: event.target.value }))}
+                          placeholder="Caption (optional)"
+                          className="w-full px-4 py-2 rounded-xl border border-gold-light/60 bg-white text-text-body text-sm placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20"
+                        />
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/heic"
+                          onChange={(event) => setYearSlotFiles((prev) => ({ ...prev, [position]: event.target.files?.[0] || null }))}
+                          className="w-full text-sm file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gold file:text-purple-deep file:font-semibold"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => void handleYearSlotUpload(position)}
+                            disabled={yearSlotUploading[position]}
+                            className="flex-1 bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold px-4 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50"
+                          >
+                            {yearSlotUploading[position] ? "Saving..." : slot ? "Replace" : "Upload"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleYearSlotClear(position)}
+                            disabled={!slot}
+                            className="px-4 py-2 rounded-[var(--radius-pill)] border border-gold-light/40 text-text-dark text-sm font-semibold disabled:opacity-40"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Laitan's Gallery Management */}
             <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-6 md:p-8">
               <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-6 flex items-center gap-2">
                 <svg className="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>
                 Laitan&apos;s Gallery
               </h2>
-              <p className="text-text-muted text-sm mb-6">Upload photos and videos. These appear on the Home page (&quot;Laitan Throughout the Years&quot;) and Gallery (&quot;Laitan&apos;s Gallery&quot; tab).</p>
+              <p className="text-text-muted text-sm mb-6">Upload photos and videos for the dedicated Laitan&apos;s Gallery tab on the gallery page.</p>
 
               {/* Upload form */}
               <div className="flex flex-col sm:flex-row gap-3 mb-6">

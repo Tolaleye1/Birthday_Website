@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type GalleryTab = "videos" | "photos" | "laitan";
+type LightboxItem = {
+  id: string;
+  kind: "image" | "video";
+  src: string;
+  alt: string;
+  title: string;
+  caption: string | null;
+};
 
 function EmptyState({ type }: { type: string }) {
   return (
@@ -21,17 +29,15 @@ function EmptyState({ type }: { type: string }) {
 }
 
 export default function GalleryPage() {
-  const [tab, setTab] = useState<GalleryTab>(() => {
-    if (typeof window !== "undefined" && window.location.hash === "#laitan-photos") {
-      return "laitan";
-    }
-
-    return "videos";
-  });
+  const [tab, setTab] = useState<GalleryTab>("videos");
   const [videos, setVideos] = useState<Contribution[]>([]);
   const [photos, setPhotos] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [lightboxItems, setLightboxItems] = useState<LightboxItem[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -63,29 +69,124 @@ export default function GalleryPage() {
         setLoading(false);
       }
     }
+
     void load();
   }, []);
 
-  const tabConfig: { key: GalleryTab; label: string; count?: number; icon: React.ReactNode }[] = [
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#laitan-photos") {
+      setTab("laitan");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!videos.length) {
+      setActiveVideoIndex(0);
+      return;
+    }
+
+    setActiveVideoIndex((current) => Math.min(current, videos.length - 1));
+  }, [videos]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setLightboxIndex(null);
+        return;
+      }
+
+      if (event.key === "ArrowLeft") {
+        setLightboxIndex((current) => current === null ? current : (current - 1 + lightboxItems.length) % lightboxItems.length);
+      }
+
+      if (event.key === "ArrowRight") {
+        setLightboxIndex((current) => current === null ? current : (current + 1) % lightboxItems.length);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex, lightboxItems.length]);
+
+  const tabConfig: { key: GalleryTab; label: string; mobileLabel: string; count?: number; icon: React.ReactNode }[] = [
     {
-      key: "videos", label: "Videos", count: videos.length,
+      key: "videos", label: "Videos", mobileLabel: "Videos", count: videos.length,
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" /></svg>,
     },
     {
-      key: "photos", label: "Photos", count: photos.length,
+      key: "photos", label: "Photos", mobileLabel: "Photos", count: photos.length,
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z" /></svg>,
     },
     {
-      key: "laitan", label: "Laitan's Gallery",
+      key: "laitan", label: "Laitan's Gallery", mobileLabel: "Laitan's",
       icon: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /></svg>,
     },
   ];
+
+  const photoLightboxItems = useMemo<LightboxItem[]>(
+    () => photos.map((photo) => ({
+      id: photo.id,
+      kind: "image",
+      src: photo.asset_url || "",
+      alt: photo.caption || `Photo by ${photo.submitter_name}`,
+      title: photo.submitter_name,
+      caption: photo.caption,
+    })),
+    [photos]
+  );
+
+  const videoLightboxItems = useMemo<LightboxItem[]>(
+    () => videos.map((video) => ({
+      id: video.id,
+      kind: "video",
+      src: video.asset_url || "",
+      alt: `Video from ${video.submitter_name}`,
+      title: video.submitter_name,
+      caption: video.caption,
+    })),
+    [videos]
+  );
+
+  const laitanLightboxItems = useMemo<LightboxItem[]>(
+    () => laitanItems.map((item) => ({
+      id: item.id,
+      kind: item.media_type === "video" ? "video" : "image",
+      src: item.asset_url || "",
+      alt: item.caption || "Laitan's gallery",
+      title: "Laitan's Gallery",
+      caption: item.caption,
+    })),
+    [laitanItems]
+  );
+
+  const activeVideo = videos[activeVideoIndex] ?? null;
+
+  function openLightbox(items: LightboxItem[], index: number) {
+    setLightboxItems(items);
+    setLightboxIndex(index);
+  }
+
+  function goToPrevItem() {
+    setLightboxIndex((current) => current === null ? current : (current - 1 + lightboxItems.length) % lightboxItems.length);
+  }
+
+  function goToNextItem() {
+    setLightboxIndex((current) => current === null ? current : (current + 1) % lightboxItems.length);
+  }
 
   return (
     <>
       <Navbar />
       <main>
-        {/* Header */}
         <section className="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
           <p className="text-gold-light uppercase tracking-[0.2em] text-xs font-semibold mb-3">Memories Worth Celebrating</p>
           <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-bold text-white mb-3">Celebration Gallery</h1>
@@ -95,14 +196,21 @@ export default function GalleryPage() {
 
         <section className="py-12 md:py-20 px-4">
           <div className="max-w-6xl mx-auto">
-            {/* Tab Switcher — Amendment 10: mobile overflow fix */}
-            <div className="flex justify-center mb-10 overflow-x-auto -mx-4 px-4">
-              <div className="bg-white rounded-[var(--radius-pill)] shadow-[var(--shadow-card)] p-1 inline-flex gap-1 flex-nowrap min-w-0">
-                {tabConfig.map((t) => (
-                  <button key={t.key} onClick={() => setTab(t.key)}
-                    className={`px-4 sm:px-6 md:px-8 py-2.5 rounded-[var(--radius-pill)] text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap shrink-0 ${tab === t.key ? "bg-purple-primary text-white shadow-md" : "text-text-muted hover:text-text-dark"}`}>
-                    {t.icon} {t.label}
-                    {t.count !== undefined && <span className={`px-1.5 py-0.5 rounded-full text-xs ${tab === t.key ? "bg-white/20" : "bg-gold/10 text-gold"}`}>{t.count}</span>}
+            <div className="mb-10">
+              <div className="bg-white rounded-[28px] shadow-[var(--shadow-card)] p-1.5 grid grid-cols-3 gap-1">
+                {tabConfig.map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => setTab(item.key)}
+                    className={`min-w-0 px-2 sm:px-4 py-2.5 rounded-[24px] text-[11px] sm:text-sm font-semibold transition-all duration-300 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 text-center ${tab === item.key ? "bg-purple-primary text-white shadow-md" : "text-text-muted hover:text-text-dark"}`}
+                  >
+                    {item.icon}
+                    <span className="leading-tight">
+                      <span className="sm:hidden">{item.mobileLabel}</span>
+                      <span className="hidden sm:inline">{item.label}</span>
+                    </span>
+                    {item.count !== undefined && <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${tab === item.key ? "bg-white/20" : "bg-gold/10 text-gold"}`}>{item.count}</span>}
                   </button>
                 ))}
               </div>
@@ -114,50 +222,72 @@ export default function GalleryPage() {
               </div>
             ) : (
               <>
-                {/* Videos Tab */}
                 {tab === "videos" && (
                   <div>
-                    {videos.length === 0 ? <EmptyState type="videos" /> : (
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {videos.map((v) => (
-                          <div key={v.id} className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
-                            <div className="aspect-video bg-purple-deep relative">
-                              <video src={v.asset_url || ""} controls className="w-full h-full object-cover" preload="metadata" />
-                            </div>
-                            <div className="p-4">
-                              <p className="font-semibold text-text-dark">{v.submitter_name}</p>
-                              {v.caption && <p className="text-sm text-text-muted mt-1">{v.caption}</p>}
+                    {videos.length === 0 || !activeVideo ? <EmptyState type="videos" /> : (
+                      <div className="max-w-4xl mx-auto">
+                        <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden">
+                          <div className="relative aspect-video bg-purple-deep">
+                            <video src={activeVideo.asset_url || ""} controls className="w-full h-full object-cover" preload="metadata" />
+
+                            {videos.length > 1 && (
+                              <>
+                                <button type="button" onClick={() => setActiveVideoIndex((current) => (current - 1 + videos.length) % videos.length)} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/45 p-3 text-white hover:bg-black/60 transition-colors" aria-label="Previous video">
+                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19.5L8.25 12 15 4.5" /></svg>
+                                </button>
+                                <button type="button" onClick={() => setActiveVideoIndex((current) => (current + 1) % videos.length)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/45 p-3 text-white hover:bg-black/60 transition-colors" aria-label="Next video">
+                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4.5L15.75 12 9 19.5" /></svg>
+                                </button>
+                              </>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => openLightbox(videoLightboxItems, activeVideoIndex)}
+                              className="absolute bottom-3 right-3 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-purple-deep shadow hover:bg-white transition-colors"
+                            >
+                              Open fullscreen
+                            </button>
+                          </div>
+
+                          <div className="p-5 md:p-6">
+                            <div className="flex items-start justify-between gap-4">
+                              <div>
+                                <p className="font-semibold text-text-dark text-lg">{activeVideo.submitter_name}</p>
+                                {activeVideo.caption && <p className="text-sm text-text-muted mt-1">{activeVideo.caption}</p>}
+                              </div>
+                              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold whitespace-nowrap">
+                                {activeVideoIndex + 1} / {videos.length}
+                              </p>
                             </div>
                           </div>
-                        ))}
+                        </div>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Photos Tab */}
                 {tab === "photos" && (
                   <div>
                     {photos.length === 0 ? <EmptyState type="photos" /> : (
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {photos.map((p) => (
-                          <div key={p.id} className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
+                        {photos.map((photo, index) => (
+                          <button key={photo.id} type="button" onClick={() => openLightbox(photoLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
                             <div className="aspect-square relative">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={p.asset_url || ""} alt={p.caption || `Photo by ${p.submitter_name}`} className="w-full h-full object-cover" />
+                              <img src={photo.asset_url || ""} alt={photo.caption || `Photo by ${photo.submitter_name}`} className="w-full h-full object-cover" />
                             </div>
                             <div className="p-3">
-                              <p className="text-sm font-semibold text-text-dark">{p.submitter_name}</p>
-                              {p.caption && <p className="text-xs text-text-muted">{p.caption}</p>}
+                              <p className="text-sm font-semibold text-text-dark">{photo.submitter_name}</p>
+                              {photo.caption && <p className="text-xs text-text-muted">{photo.caption}</p>}
                             </div>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Laitan's Gallery Tab */}
                 {tab === "laitan" && (
                   <div>
                     <div className="text-center mb-8">
@@ -165,8 +295,8 @@ export default function GalleryPage() {
                     </div>
                     {laitanItems.length === 0 ? <EmptyState type="media" /> : (
                       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {laitanItems.map((item) => (
-                          <div key={item.id} className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
+                        {laitanItems.map((item, index) => (
+                          <button key={item.id} type="button" onClick={() => openLightbox(laitanLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
                             <div className="aspect-square relative">
                               {item.media_type === "video" ? (
                                 <div className="w-full h-full relative bg-purple-deep">
@@ -185,14 +315,13 @@ export default function GalleryPage() {
                             {item.caption && (
                               <div className="p-3"><p className="text-sm text-text-muted text-center">{item.caption}</p></div>
                             )}
-                          </div>
+                          </button>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* CTA - only on guest tabs */}
                 {tab !== "laitan" && (
                   <div className="text-center mt-12">
                     <p className="text-text-muted mb-4">Want to add your own memory?</p>
@@ -208,6 +337,72 @@ export default function GalleryPage() {
         </section>
       </main>
       <Footer />
+
+      {lightboxIndex !== null && lightboxItems[lightboxIndex] && (
+        <div
+          className="fixed inset-0 z-[80] bg-black/90 backdrop-blur-sm flex items-center justify-center"
+          onClick={() => setLightboxIndex(null)}
+          onTouchStart={(event) => setTouchStartX(event.changedTouches[0]?.clientX ?? null)}
+          onTouchEnd={(event) => {
+            const endX = event.changedTouches[0]?.clientX ?? null;
+
+            if (touchStartX === null || endX === null) {
+              setTouchStartX(null);
+              return;
+            }
+
+            const diff = touchStartX - endX;
+            if (Math.abs(diff) > 40) {
+              if (diff > 0) {
+                goToNextItem();
+              } else {
+                goToPrevItem();
+              }
+            }
+
+            setTouchStartX(null);
+          }}
+        >
+          <button type="button" onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-colors" aria-label="Close lightbox">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+
+          {lightboxItems.length > 1 && (
+            <>
+              <button type="button" onClick={(event) => { event.stopPropagation(); goToPrevItem(); }} className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-colors" aria-label="Previous item">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19.5L8.25 12 15 4.5" /></svg>
+              </button>
+              <button type="button" onClick={(event) => { event.stopPropagation(); goToNextItem(); }} className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition-colors" aria-label="Next item">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4.5L15.75 12 9 19.5" /></svg>
+              </button>
+            </>
+          )}
+
+          <div className="w-full max-w-6xl px-12 md:px-20" onClick={(event) => event.stopPropagation()}>
+            <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-purple-deep/90 to-black/80 shadow-2xl overflow-hidden">
+              <div className="max-h-[75vh] flex items-center justify-center bg-black/40">
+                {lightboxItems[lightboxIndex].kind === "video" ? (
+                  <video src={lightboxItems[lightboxIndex].src} controls className="max-h-[75vh] w-full object-contain" autoPlay />
+                ) : (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={lightboxItems[lightboxIndex].src} alt={lightboxItems[lightboxIndex].alt} className="max-h-[75vh] w-full object-contain" />
+                )}
+              </div>
+              <div className="px-5 md:px-6 py-4 text-white">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-[family-name:var(--font-display)] text-xl text-gold-light">{lightboxItems[lightboxIndex].title}</p>
+                    {lightboxItems[lightboxIndex].caption && <p className="text-white/75 text-sm mt-1">{lightboxItems[lightboxIndex].caption}</p>}
+                  </div>
+                  <p className="text-xs uppercase tracking-[0.16em] text-gold whitespace-nowrap">
+                    {lightboxIndex + 1} / {lightboxItems.length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

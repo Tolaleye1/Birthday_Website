@@ -29,6 +29,16 @@ CREATE TABLE IF NOT EXISTS laitan_gallery (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Amendment 11: fixed curated slots for "Laitan Over the Years" on the home page
+-- Run this SQL in Supabase Dashboard SQL Editor if the table does not exist yet.
+CREATE TABLE IF NOT EXISTS laitan_years_slots (
+  position INTEGER PRIMARY KEY CHECK (position BETWEEN 1 AND 6),
+  asset_path TEXT,
+  asset_url TEXT,
+  caption TEXT,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Admin access requests (Amendment 7)
 CREATE TABLE IF NOT EXISTS admin_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -45,6 +55,8 @@ CREATE INDEX IF NOT EXISTS idx_contributions_public
 -- Index for laitan gallery display order
 CREATE INDEX IF NOT EXISTS idx_laitan_gallery_order 
   ON laitan_gallery (display_order ASC);
+
+-- Position is the primary key, so no extra index is needed for laitan_years_slots
 
 -- ============================================
 -- Migration (run if upgrading from v1.1)

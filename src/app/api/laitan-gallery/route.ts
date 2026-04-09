@@ -2,9 +2,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase/server";
 import { ALLOWED_GALLERY_TYPES, MAX_PHOTO_SIZE_BYTES, MAX_VIDEO_SIZE_BYTES, ALLOWED_PHOTO_TYPES } from "@/lib/types";
 
-export async function GET() {
+function isYearsScope(req: NextRequest) {
+  return new URL(req.url).searchParams.get("scope") === "years";
+}
+
+export async function GET(req: NextRequest) {
   try {
     const supabase = createServerClient();
+
+    if (isYearsScope(req)) {
+      const { data, error } = await supabase
+        .from("laitan_years_slots")
+        .select("*")
+        .order("position", { ascending: true });
+
+      if (error) {
+        console.error("Laitan years slots fetch error:", error);
+        return NextResponse.json({ error: "Failed to load Laitan Over the Years slots." }, { status: 500 });
+      }
+
+      return NextResponse.json({ slots: data ?? [] });
+    }
+
     const { data, error } = await supabase
       .from("laitan_gallery")
       .select("*")
@@ -26,10 +45,17 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { caption, fileName, mimeType, fileSize } = body;
+    const { fileName, mimeType, fileSize, position } = body;
 
-    if (!mimeType || !ALLOWED_GALLERY_TYPES.includes(mimeType)) {
-      return NextResponse.json({ error: "Invalid file format. Accepted: JPEG, PNG, WebP, HEIC, MP4, MOV, WebM." }, { status: 400 });
+    const yearsScope = isYearsScope(req);
+    const allowedTypes = yearsScope ? ALLOWED_PHOTO_TYPES : ALLOWED_GALLERY_TYPES;
+
+    if (!mimeType || !allowedTypes.includes(mimeType)) {
+      return NextResponse.json({
+        error: yearsScope
+          ? "Invalid image format. Use JPEG, PNG, WebP, or HEIC."
+          : "Invalid file format. Accepted: JPEG, PNG, WebP, HEIC, MP4, MOV, WebM.",
+      }, { status: 400 });
     }
 
     const isPhoto = ALLOWED_PHOTO_TYPES.includes(mimeType);
@@ -40,7 +66,13 @@ export async function POST(req: NextRequest) {
 
     const supabase = createServerClient();
     const ext = fileName?.split(".").pop() || "jpg";
-    const path = `laitan/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const path = yearsScope
+      ? `laitan-years/slot-${position}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      : `laitan/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+    if (yearsScope && (!Number.isInteger(position) || position < 1 || position > 6)) {
+      return NextResponse.json({ error: "A slot position from 1 to 6 is required." }, { status: 400 });
+    }
 
     const { data: signedData, error: signedError } = await supabase.storage
       .from("media")
@@ -57,7 +89,6 @@ export async function POST(req: NextRequest) {
       uploadUrl: signedData.signedUrl,
       uploadToken: signedData.token,
       assetPath: path,
-      caption: caption || null,
       mediaType,
     });
   } catch (err) {
@@ -70,7 +101,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { assetPath, caption, mediaType } = body;
+    const { assetPath, caption, mediaType, position } = body;
 
     if (!assetPath) {
       return NextResponse.json({ error: "Asset path required." }, { status: 400 });
@@ -78,6 +109,50 @@ export async function PUT(req: NextRequest) {
 
     const supabase = createServerClient();
     const { data: urlData } = supabase.storage.from("media").getPublicUrl(assetPath);
+
+    if (isYearsScope(req)) {
+      if (!Number.isInteger(position) || position < 1 || position > 6) {
+        return NextResponse.json({ error: "A slot position from 1 to 6 is required." }, { status: 400 });
+      }
+
+      const { data: existing } = await supabase
+        .from("laitan_years_slots")
+        .select("asset_path")
+        .eq("position", position)
+        .maybeSingle();
+
+      if (existing?.asset_path && existing.asset_path !== assetPath) {
+        const { error: removeError } = await supabase.storage
+          .from("media")
+          .remove([existing.asset_path]);
+
+        if (removeError) {
+          console.error("Laitan years old asset cleanup error:", removeError);
+        }
+      }
+
+      const { data, error } = await supabase
+        .from("laitan_years_slots")
+        .upsert(
+          {
+            position,
+            asset_path: assetPath,
+            asset_url: urlData.publicUrl,
+            caption: caption || null,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "position" }
+        )
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Laitan years slot upsert error:", error);
+        return NextResponse.json({ error: "Failed to save slot." }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true, slot: data }, { status: 201 });
+    }
 
     // Get max display_order
     const { data: maxOrder } = await supabase
@@ -114,12 +189,53 @@ export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+    const position = Number(searchParams.get("position"));
+
+    const supabase = createServerClient();
+
+    if (searchParams.get("scope") === "years") {
+      if (!Number.isInteger(position) || position < 1 || position > 6) {
+        return NextResponse.json({ error: "A valid slot position is required." }, { status: 400 });
+      }
+
+      const { data: slot, error: slotError } = await supabase
+        .from("laitan_years_slots")
+        .select("*")
+        .eq("position", position)
+        .maybeSingle();
+
+      if (slotError) {
+        console.error("Laitan years slot fetch error:", slotError);
+        return NextResponse.json({ error: "Failed to load slot." }, { status: 500 });
+      }
+
+      if (slot?.asset_path) {
+        const { error: storageError } = await supabase.storage
+          .from("media")
+          .remove([slot.asset_path]);
+
+        if (storageError) {
+          console.error("Laitan years storage delete error:", storageError);
+        }
+      }
+
+      const { error: deleteError } = await supabase
+        .from("laitan_years_slots")
+        .delete()
+        .eq("position", position);
+
+      if (deleteError) {
+        console.error("Laitan years slot delete error:", deleteError);
+        return NextResponse.json({ error: "Failed to clear slot." }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true });
+    }
 
     if (!id) {
       return NextResponse.json({ error: "Item id is required." }, { status: 400 });
     }
 
-    const supabase = createServerClient();
     const { data: item, error: fetchError } = await supabase
       .from("laitan_gallery")
       .select("*")
