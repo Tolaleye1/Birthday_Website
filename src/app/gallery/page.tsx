@@ -34,7 +34,6 @@ export default function GalleryPage() {
   const [photos, setPhotos] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [lightboxItems, setLightboxItems] = useState<LightboxItem[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -78,15 +77,6 @@ export default function GalleryPage() {
       setTab("laitan");
     }
   }, []);
-
-  useEffect(() => {
-    if (!videos.length) {
-      setActiveVideoIndex(0);
-      return;
-    }
-
-    setActiveVideoIndex((current) => Math.min(current, videos.length - 1));
-  }, [videos]);
 
   useEffect(() => {
     if (lightboxIndex === null) {
@@ -168,8 +158,6 @@ export default function GalleryPage() {
     [laitanItems]
   );
 
-  const activeVideo = videos[activeVideoIndex] ?? null;
-
   function openLightbox(items: LightboxItem[], index: number) {
     setLightboxItems(items);
     setLightboxIndex(index);
@@ -224,44 +212,39 @@ export default function GalleryPage() {
               <>
                 {tab === "videos" && (
                   <div>
-                    {videos.length === 0 || !activeVideo ? <EmptyState type="videos" /> : (
-                      <div className="max-w-4xl mx-auto">
-                        <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden">
-                          <div className="relative aspect-video bg-purple-deep">
-                            <video src={activeVideo.asset_url || ""} controls className="w-full h-full object-cover" preload="metadata" />
-
-                            {videos.length > 1 && (
-                              <>
-                                <button type="button" onClick={() => setActiveVideoIndex((current) => (current - 1 + videos.length) % videos.length)} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/45 p-3 text-white hover:bg-black/60 transition-colors" aria-label="Previous video">
-                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19.5L8.25 12 15 4.5" /></svg>
-                                </button>
-                                <button type="button" onClick={() => setActiveVideoIndex((current) => (current + 1) % videos.length)} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/45 p-3 text-white hover:bg-black/60 transition-colors" aria-label="Next video">
-                                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 4.5L15.75 12 9 19.5" /></svg>
-                                </button>
-                              </>
-                            )}
-
-                            <button
-                              type="button"
-                              onClick={() => openLightbox(videoLightboxItems, activeVideoIndex)}
-                              className="absolute bottom-3 right-3 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-purple-deep shadow hover:bg-white transition-colors"
-                            >
-                              Open fullscreen
-                            </button>
-                          </div>
-
-                          <div className="p-5 md:p-6">
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <p className="font-semibold text-text-dark text-lg">{activeVideo.submitter_name}</p>
-                                {activeVideo.caption && <p className="text-sm text-text-muted mt-1">{activeVideo.caption}</p>}
+                    {videos.length === 0 ? <EmptyState type="videos" /> : (
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {videos.map((video, index) => (
+                          <button
+                            key={video.id}
+                            type="button"
+                            onClick={() => openLightbox(videoLightboxItems, index)}
+                            className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift"
+                          >
+                            <div className="relative aspect-video bg-purple-deep">
+                              <video src={video.asset_url || ""} className="w-full h-full object-cover" preload="metadata" muted />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                  <svg className="w-6 h-6 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                </div>
                               </div>
-                              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold whitespace-nowrap">
-                                {activeVideoIndex + 1} / {videos.length}
-                              </p>
                             </div>
-                          </div>
-                        </div>
+
+                            <div className="p-4">
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="font-semibold text-text-dark">{video.submitter_name}</p>
+                                  {video.caption && <p className="text-sm text-text-muted mt-1">{video.caption}</p>}
+                                </div>
+                                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold whitespace-nowrap">
+                                  {index + 1} / {videos.length}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
                       </div>
                     )}
                   </div>
