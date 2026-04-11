@@ -93,46 +93,21 @@ export default function TributeLetterExperience({
             style={{ height: "280px" }}
           >
             {/* Envelope flap — pink-to-blush chevron */}
-            <div className="relative shrink-0" style={{ height: "88px" }}>
-              {/* Base blush fill */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: "linear-gradient(160deg, #F5D5E0 0%, #FDEEF4 100%)",
-                }}
-              />
-              {/* Left triangle (white) */}
-              <div
-                className="absolute left-0 top-0 bg-white/90"
-                style={{
-                  width: "50%",
-                  height: "100%",
-                  clipPath: "polygon(0 0, 100% 0, 0 100%)",
-                }}
-              />
-              {/* Right triangle (white) */}
-              <div
-                className="absolute right-0 top-0 bg-white/90"
-                style={{
-                  width: "50%",
-                  height: "100%",
-                  clipPath: "polygon(0 0, 100% 0, 100% 100%)",
-                }}
-              />
+            <div className="relative shrink-0" style={{ height: "88px", zIndex: 10 }}>
               {/* Flap chevron — the blush inverted-V pointing down */}
               <div
                 className="absolute inset-x-0 top-0"
                 style={{
                   height: "100%",
-                  background: "linear-gradient(160deg, #F5D5E0 0%, #FDEEF4 100%)",
-                  clipPath: "polygon(0 0, 100% 0, 50% 68%)",
+                  background: "linear-gradient(135deg, #F5D5E0 0%, #FDEEF4 100%)",
+                  clipPath: "polygon(0 0, 100% 0, 50% 100%)",
                 }}
               />
-              {/* Gold circular heart icon centred on flap */}
+              {/* Gold circular heart icon centred on flap tip */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full text-white"
                 style={{
-                  top: "18px",
+                  bottom: "-17px",
                   width: "34px",
                   height: "34px",
                   background: "#C9A84C",
