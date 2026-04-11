@@ -27,7 +27,7 @@ export default function Footer() {
         >
           Admin
         </Link> */}
-        <p className="text-white/30 text-xs mt-2">Courtesy: Oluwatomisin Olaleye <br />          Fadeyi Bukunmi</p>
+        <p className="text-white/30 text-xs mt-2">Courtesy: Oluwatomisin Olaleye <br />          Bukunmi Fadeyi</p>
       </div>
     </footer>
   );
