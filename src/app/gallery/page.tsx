@@ -323,7 +323,7 @@ export default function GalleryPage() {
 
       {lightboxIndex !== null && lightboxItems[lightboxIndex] && (
         <div
-          className="fixed inset-0 z-[80] bg-black/90 backdrop-blur-sm flex items-center justify-center"
+          className="fixed inset-0 z-[80] bg-black/90 flex items-center justify-center"
           onClick={() => setLightboxIndex(null)}
           onTouchStart={(event) => setTouchStartX(event.changedTouches[0]?.clientX ?? null)}
           onTouchEnd={(event) => {
@@ -361,28 +361,22 @@ export default function GalleryPage() {
             </>
           )}
 
-          <div className="w-full max-w-6xl px-12 md:px-20" onClick={(event) => event.stopPropagation()}>
-            <div className="rounded-[32px] border border-white/10 bg-gradient-to-b from-purple-deep/90 to-black/80 shadow-2xl overflow-hidden">
-              <div className="max-h-[75vh] flex items-center justify-center bg-black/40">
-                {lightboxItems[lightboxIndex].kind === "video" ? (
-                  <video src={lightboxItems[lightboxIndex].src} controls className="max-h-[75vh] w-full object-contain" autoPlay />
-                ) : (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={lightboxItems[lightboxIndex].src} alt={lightboxItems[lightboxIndex].alt} className="max-h-[75vh] w-full object-contain" />
-                )}
-              </div>
-              <div className="px-5 md:px-6 py-4 text-white">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-[family-name:var(--font-display)] text-xl text-gold-light">{lightboxItems[lightboxIndex].title}</p>
-                    {lightboxItems[lightboxIndex].caption && <p className="text-white/75 text-sm mt-1">{lightboxItems[lightboxIndex].caption}</p>}
-                  </div>
-                  <p className="text-xs uppercase tracking-[0.16em] text-gold whitespace-nowrap">
-                    {lightboxIndex + 1} / {lightboxItems.length}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="flex max-h-[90vh] max-w-[90vw] items-center justify-center" onClick={(event) => event.stopPropagation()}>
+            {lightboxItems[lightboxIndex].kind === "video" ? (
+              <video
+                src={lightboxItems[lightboxIndex].src}
+                controls
+                className="max-h-[90vh] max-w-[90vw] object-contain"
+                autoPlay
+              />
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={lightboxItems[lightboxIndex].src}
+                alt={lightboxItems[lightboxIndex].alt}
+                className="max-h-[90vh] max-w-[90vw] object-contain"
+              />
+            )}
           </div>
         </div>
       )}
