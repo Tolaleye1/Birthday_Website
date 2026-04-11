@@ -64,8 +64,6 @@ async function getRecentTributes(): Promise<Contribution[]> {
   }
 }
 
-const avatarColors = ["bg-purple-primary", "bg-berry", "bg-gold"];
-
 export default async function RecentTributesSection() {
   const tributes = await getRecentTributes();
 
@@ -83,7 +81,6 @@ export default async function RecentTributesSection() {
 
         <RecentTributesSectionClient
           tributes={tributes.length > 0 ? tributes : placeholderTributes}
-          avatarColors={avatarColors}
         />
 
         <div className="text-center">
