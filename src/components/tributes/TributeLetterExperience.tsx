@@ -8,9 +8,9 @@ type TributeLetterExperienceProps = {
   className?: string;
 };
 
-function LetterHeartIcon() {
+function HeartIcon({ className = "h-5 w-5" }: { className?: string }) {
   return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 21s-6.716-4.348-9.192-8.347C.81 9.43 2.113 5.25 6.03 5.25c2.31 0 3.717 1.464 4.47 2.667.753-1.203 2.16-2.667 4.47-2.667 3.917 0 5.22 4.18 3.222 7.403C18.716 16.652 12 21 12 21Z" />
     </svg>
   );
@@ -18,7 +18,7 @@ function LetterHeartIcon() {
 
 function EnvelopeIcon() {
   return (
-    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21.75 8.25v7.5A2.25 2.25 0 0119.5 18H4.5a2.25 2.25 0 01-2.25-2.25v-7.5m19.5 0L13.06 13.94a1.5 1.5 0 01-2.12 0L2.25 8.25m19.5 0L13.5 5.1a3 3 0 00-3 0L2.25 8.25" />
     </svg>
   );
@@ -26,37 +26,32 @@ function EnvelopeIcon() {
 
 function CloseIcon() {
   return (
-    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
 }
 
-function Flourish({
-  className,
-  mirrored = false,
-}: {
-  className: string;
-  mirrored?: boolean;
-}) {
+/* Decorative corner curl — used in the letter modal */
+function CornerCurl({ className, style }: { className: string; style?: React.CSSProperties }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 120 120"
+      style={style}
+      viewBox="0 0 80 80"
       fill="none"
       aria-hidden="true"
-      style={mirrored ? { transform: "scaleX(-1)" } : undefined}
     >
       <path
-        d="M20 98C20 70 34 58 44 58C52 58 56 64 56 70C56 77 51 82 44 82C36 82 30 76 30 68C30 52 43 34 63 27C81 20 95 27 100 40"
+        d="M10 70C10 50 22 38 34 38C43 38 48 44 48 51C48 59 42 65 34 65C24 65 16 57 16 47C16 30 30 12 52 6"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
       />
       <path
-        d="M90 18C85 22 82 28 82 34C82 40 86 46 92 46C98 46 103 41 103 34C103 26 97 18 89 18C78 18 68 27 65 40"
+        d="M60 10C54 15 51 22 51 30C51 37 56 44 63 44C70 44 76 38 76 30C76 21 69 12 60 12C47 12 36 23 33 38"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
       />
     </svg>
@@ -70,14 +65,10 @@ export default function TributeLetterExperience({
   const [selectedTribute, setSelectedTribute] = useState<Contribution | null>(null);
 
   useEffect(() => {
-    if (!selectedTribute) {
-      return;
-    }
+    if (!selectedTribute) return;
 
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setSelectedTribute(null);
-      }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setSelectedTribute(null);
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -91,61 +82,114 @@ export default function TributeLetterExperience({
 
   return (
     <>
+      {/* ── Card Grid ── */}
       <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 ${className}`}>
         {tributes.map((tribute) => (
           <button
             key={tribute.id}
             type="button"
             onClick={() => setSelectedTribute(tribute)}
-            className="group relative flex h-[320px] flex-col overflow-hidden rounded-[16px] border border-gold/15 bg-ivory text-left shadow-[0_12px_32px_rgba(45,16,72,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(201,168,76,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
+            className="group relative flex flex-col overflow-hidden rounded-[16px] bg-white text-left shadow-[0_4px_20px_rgba(45,16,72,0.08)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_8px_30px_rgba(201,168,76,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]/60"
+            style={{ height: "280px" }}
           >
-            <div className="relative h-24 shrink-0 bg-[linear-gradient(135deg,rgba(201,168,76,0.22),rgba(245,213,224,0.9),rgba(75,29,110,0.18))]">
+            {/* Envelope flap — pink-to-blush chevron */}
+            <div className="relative shrink-0" style={{ height: "88px" }}>
+              {/* Base blush fill */}
               <div
-                className="absolute inset-x-0 top-0 h-full bg-blush"
-                style={{ clipPath: "polygon(0 0, 100% 0, 50% 62%)" }}
+                className="absolute inset-0"
+                style={{
+                  background: "linear-gradient(160deg, #F5D5E0 0%, #FDEEF4 100%)",
+                }}
               />
+              {/* Left triangle (white) */}
               <div
-                className="absolute left-0 top-0 h-[72px] w-[48%] bg-white/88"
-                style={{ clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+                className="absolute left-0 top-0 bg-white/90"
+                style={{
+                  width: "50%",
+                  height: "100%",
+                  clipPath: "polygon(0 0, 100% 0, 0 100%)",
+                }}
               />
+              {/* Right triangle (white) */}
               <div
-                className="absolute right-0 top-0 h-[72px] w-[48%] bg-white/88"
-                style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%)" }}
+                className="absolute right-0 top-0 bg-white/90"
+                style={{
+                  width: "50%",
+                  height: "100%",
+                  clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+                }}
               />
-              <div className="absolute left-1/2 top-5 flex h-8 w-8 -translate-x-1/2 items-center justify-center rounded-full bg-white/70 text-gold shadow-[0_8px_18px_rgba(201,168,76,0.22)]">
-                <LetterHeartIcon />
+              {/* Flap chevron — the blush inverted-V pointing down */}
+              <div
+                className="absolute inset-x-0 top-0"
+                style={{
+                  height: "100%",
+                  background: "linear-gradient(160deg, #F5D5E0 0%, #FDEEF4 100%)",
+                  clipPath: "polygon(0 0, 100% 0, 50% 68%)",
+                }}
+              />
+              {/* Gold circular heart icon centred on flap */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center rounded-full text-white"
+                style={{
+                  top: "18px",
+                  width: "34px",
+                  height: "34px",
+                  background: "#C9A84C",
+                  boxShadow: "0 4px 12px rgba(201,168,76,0.35)",
+                }}
+              >
+                <HeartIcon className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
-              <p className="border-b border-gold/20 pb-3 font-[family-name:var(--font-display)] text-[1.45rem] italic text-gold">
-                To: {tribute.submitter_name}
+            {/* Card body */}
+            <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+              {/* Submitter name — Playfair italic gold, no "To:" prefix */}
+              <p
+                className="font-[family-name:var(--font-display)] italic"
+                style={{ color: "#C9A84C", fontSize: "1.1rem" }}
+              >
+                {tribute.submitter_name}
               </p>
 
-              <div className="relative mt-4 flex-1 overflow-hidden">
-                <p
-                  className="text-sm leading-7 text-text-muted"
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 2,
-                    overflow: "hidden",
-                  }}
-                >
-                  {tribute.message}
-                </p>
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-ivory via-ivory/90 to-transparent" />
-              </div>
+              {/* Message preview — 2-line clamp */}
+              <p
+                className="mt-2 flex-1 text-sm leading-relaxed"
+                style={{
+                  color: "#8E7BA7",
+                  display: "-webkit-box",
+                  WebkitBoxOrient: "vertical",
+                  WebkitLineClamp: 2,
+                  overflow: "hidden",
+                }}
+              >
+                {tribute.message || tribute.caption || ""}
+              </p>
 
-              <div className="mt-5 flex items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-purple-primary">
+              {/* Footer row */}
+              <div className="mt-4 flex items-center justify-between">
+                {/* Read link */}
+                <div
+                  className="inline-flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.16em]"
+                  style={{ color: "#8E7BA7" }}
+                >
                   <EnvelopeIcon />
                   <span>Read Tribute</span>
-                  <span aria-hidden="true">-&gt;</span>
+                  <span aria-hidden="true">→</span>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold text-white shadow-[0_10px_20px_rgba(201,168,76,0.35)] transition-transform duration-300 group-hover:scale-105">
-                  <LetterHeartIcon />
+                {/* Gold heart button */}
+                <div
+                  className="flex items-center justify-center rounded-full text-white transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    background: "#C9A84C",
+                    boxShadow: "0 6px 18px rgba(201,168,76,0.35)",
+                  }}
+                >
+                  <HeartIcon className="h-4 w-4" />
                 </div>
               </div>
             </div>
@@ -153,76 +197,155 @@ export default function TributeLetterExperience({
         ))}
       </div>
 
+      {/* ── Letter Modal ── */}
       {selectedTribute ? (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-[#1f0b33]/70 p-4 backdrop-blur-[2px]"
+          className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+          style={{ background: "rgba(0,0,0,0.65)" }}
           onClick={() => setSelectedTribute(null)}
         >
           <div
             role="dialog"
             aria-modal="true"
-            className="relative w-full max-w-4xl overflow-hidden rounded-[28px] border border-gold/25 bg-ivory shadow-[0_25px_80px_rgba(24,10,42,0.38)] animate-[fadeUp_0.35s_ease-out_both]"
-            onClick={(event) => event.stopPropagation()}
+            className="relative w-full overflow-y-auto rounded-[12px]"
+            style={{
+              maxWidth: "580px",
+              maxHeight: "85vh",
+              background: "linear-gradient(175deg, #FFF8F0 0%, #FFF3E8 100%)",
+              boxShadow: "0 32px 80px rgba(20,8,40,0.4)",
+            }}
+            onClick={(e) => e.stopPropagation()}
           >
+            {/* Close button — absolute top-right gold circle */}
             <button
               type="button"
               onClick={() => setSelectedTribute(null)}
-              className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-gold/40 bg-white/80 text-gold shadow-[0_12px_24px_rgba(201,168,76,0.18)] transition-colors hover:bg-white"
+              className="absolute right-4 top-4 z-20 flex items-center justify-center rounded-full text-white transition-opacity hover:opacity-80"
+              style={{
+                width: "32px",
+                height: "32px",
+                background: "#C9A84C",
+              }}
               aria-label="Close tribute"
             >
               <CloseIcon />
             </button>
 
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,168,76,0.14),transparent_28%),radial-gradient(circle_at_bottom,rgba(245,213,224,0.22),transparent_30%)]" />
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-3 bg-gradient-to-r from-gold via-blush to-purple-primary" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2 bg-gradient-to-r from-gold via-blush to-purple-primary/80" />
+            {/* Corner flourishes */}
+            <CornerCurl className="pointer-events-none absolute left-3 top-3 h-16 w-16 text-[#C9A84C]/25" />
+            <CornerCurl
+              className="pointer-events-none absolute bottom-3 left-3 h-16 w-16 text-[#C9A84C]/25"
+              style={{ transform: "scaleY(-1)" }}
+            />
 
-            <Flourish className="pointer-events-none absolute left-5 top-6 h-20 w-20 text-gold/35" />
-            <Flourish className="pointer-events-none absolute right-12 top-8 h-20 w-20 text-gold/30" mirrored />
-            <Flourish className="pointer-events-none absolute bottom-10 left-6 h-20 w-20 text-gold/30" />
-            <Flourish className="pointer-events-none absolute bottom-8 right-6 h-20 w-20 text-gold/30" mirrored />
+            <div className="px-10 pb-10 pt-8 md:px-12">
+              {/* Top section: occasion text + stamp */}
+              <div className="flex items-start justify-between gap-4 pr-8">
+                <p
+                  className="font-[family-name:var(--font-body)] italic"
+                  style={{ color: "#C9A84C", fontSize: "0.8rem" }}
+                >
+                  On the occasion of her 50th
+                </p>
 
-            <div className="relative px-6 pb-8 pt-8 md:px-10 md:pb-10 md:pt-10">
-              <div className="flex items-start justify-between gap-6 pr-14">
-                <div>
-                  <p className="font-[family-name:var(--font-body)] text-sm italic text-gold">
-                    On the occasion of her 50th
-                  </p>
-                  <div className="mt-3 h-px w-28 bg-gold/35" />
-                </div>
-
-                <div className="rotate-[6deg] border-2 border-gold/60 bg-white/70 px-3 py-2 text-center shadow-[0_12px_24px_rgba(201,168,76,0.12)]">
-                  <p className="font-[family-name:var(--font-display)] text-2xl font-bold leading-none text-purple-primary">
+                {/* Stamp badge */}
+                <div
+                  className="shrink-0 rotate-[5deg] border-2 px-3 py-2 text-center"
+                  style={{
+                    borderColor: "#C9A84C",
+                    background: "rgba(255,248,240,0.9)",
+                    boxShadow: "0 4px 12px rgba(201,168,76,0.15)",
+                  }}
+                >
+                  <p
+                    className="font-[family-name:var(--font-display)] font-bold leading-none"
+                    style={{ color: "#2D0D45", fontSize: "1.5rem" }}
+                  >
                     50
                   </p>
-                  <p className="mt-1 text-[0.58rem] font-semibold uppercase tracking-[0.14em] text-gold">
+                  <p
+                    className="mt-0.5 font-semibold uppercase tracking-[0.12em]"
+                    style={{ color: "#C9A84C", fontSize: "0.5rem" }}
+                  >
                     Years of Grace
                   </p>
                 </div>
               </div>
 
-              <h2 className="mt-8 font-[family-name:var(--font-display)] text-[2.2rem] italic leading-tight text-gold md:text-[3.1rem]">
+              {/* Thin gold rule */}
+              <div
+                className="mt-4"
+                style={{ height: "1px", background: "linear-gradient(90deg, transparent, #C9A84C60, transparent)" }}
+              />
+
+              {/* Greeting */}
+              <h2
+                className="mt-6 font-[family-name:var(--font-display)] italic leading-tight"
+                style={{ color: "#C9A84C", fontSize: "2rem" }}
+              >
                 Dear Pastor Olakiitan,
               </h2>
 
-              <div className="mt-8 space-y-5 text-[1.05rem] leading-9 text-text-body">
-                {String(selectedTribute.message || "")
+              {/* Media (photo / video) */}
+              {selectedTribute.type === "photo" && selectedTribute.asset_url && (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={selectedTribute.asset_url}
+                  alt={selectedTribute.caption || "Tribute photo"}
+                  className="mt-6 w-full rounded-xl object-cover"
+                  style={{ maxHeight: "260px" }}
+                />
+              )}
+              {selectedTribute.type === "video" && selectedTribute.asset_url && (
+                <video
+                  src={selectedTribute.asset_url}
+                  controls
+                  className="mt-6 w-full rounded-xl"
+                  style={{ maxHeight: "240px" }}
+                />
+              )}
+
+              {/* Message body — notebook lined paper effect */}
+              <div
+                className="mt-6 leading-[2rem] text-[1rem]"
+                style={{
+                  color: "#3D2955",
+                  lineHeight: "2rem",
+                  /* Notebook lines: 1px gold lines every 2rem starting at 2rem */
+                  background:
+                    "repeating-linear-gradient(transparent, transparent calc(2rem - 1px), rgba(201,168,76,0.15) calc(2rem - 1px), rgba(201,168,76,0.15) 2rem)",
+                  backgroundSize: "100% 2rem",
+                  paddingBottom: "1rem",
+                }}
+              >
+                {String(selectedTribute.message || selectedTribute.caption || "")
                   .split(/\n+/)
                   .filter(Boolean)
-                  .map((paragraph, index) => (
-                    <p key={`${selectedTribute.id}-${index}`} className="whitespace-pre-wrap">
+                  .map((paragraph, idx) => (
+                    <p key={`${selectedTribute.id}-p-${idx}`} className="whitespace-pre-wrap">
                       {paragraph}
                     </p>
                   ))}
               </div>
 
-              <div className="mt-10 h-px w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+              {/* Divider */}
+              <div
+                className="mt-8"
+                style={{ height: "1px", background: "linear-gradient(90deg, transparent, #C9A84C70, transparent)" }}
+              />
 
-              <div className="mt-8 text-right">
-                <p className="font-[family-name:var(--font-body)] text-lg italic text-text-muted">
+              {/* Sign-off — bottom right */}
+              <div className="mt-6 text-right">
+                <p
+                  className="font-[family-name:var(--font-body)] italic"
+                  style={{ color: "#8E7BA7", fontSize: "0.9rem" }}
+                >
                   With love,
                 </p>
-                <p className="mt-1 font-[family-name:var(--font-display)] text-[2rem] italic text-gold md:text-[2.4rem]">
+                <p
+                  className="mt-1 font-[family-name:var(--font-display)] italic"
+                  style={{ color: "#C9A84C", fontSize: "1.5rem" }}
+                >
                   {selectedTribute.submitter_name}
                 </p>
               </div>
