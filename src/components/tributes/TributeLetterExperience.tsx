@@ -253,14 +253,6 @@ export default function TributeLetterExperience({
                 style={{ height: "1px", background: "linear-gradient(90deg, transparent, #C9A84C60, transparent)" }}
               />
 
-              {/* Greeting */}
-              <h2
-                className="mt-6 font-[family-name:var(--font-display)] italic leading-tight"
-                style={{ color: "#C9A84C", fontSize: "2rem" }}
-              >
-                Dear Pastor Olakiitan,
-              </h2>
-
               {/* Media (photo / video) */}
               {selectedTribute.type === "photo" && selectedTribute.asset_url && (
                 /* eslint-disable-next-line @next/next/no-img-element */
