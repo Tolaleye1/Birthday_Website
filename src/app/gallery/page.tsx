@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import type { Contribution, LaitanGalleryItem } from "@/lib/types";
@@ -16,6 +16,12 @@ type LightboxItem = {
   caption: string | null;
 };
 
+const PAGE_SIZE = 12;
+const BLUR_PLACEHOLDER =
+  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AJQAB/9k=";
+const VIDEO_POSTER =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='400' height='300' fill='%234B1D6E'/%3E%3C/svg%3E";
+
 function EmptyState({ type }: { type: string }) {
   return (
     <div className="text-center py-16">
@@ -28,73 +34,131 @@ function EmptyState({ type }: { type: string }) {
   );
 }
 
+function LoadMoreButton({
+  loading,
+  onClick,
+}: {
+  loading: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div className="text-center mt-10">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={loading}
+        className="bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold px-8 py-3 rounded-[var(--radius-pill)] transition-all inline-flex items-center gap-2 disabled:opacity-60"
+      >
+        {loading ? (
+          <>
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            Loading…
+          </>
+        ) : (
+          "Load More"
+        )}
+      </button>
+    </div>
+  );
+}
+
 export default function GalleryPage() {
   const [tab, setTab] = useState<GalleryTab>("videos");
+
+  // Per-tab data + pagination state
   const [videos, setVideos] = useState<Contribution[]>([]);
   const [photos, setPhotos] = useState<Contribution[]>([]);
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+
+  const [videosHasMore, setVideosHasMore] = useState(true);
+  const [photosHasMore, setPhotosHasMore] = useState(true);
+  const [laitanHasMore, setLaitanHasMore] = useState(true);
+
+  const [videosLoading, setVideosLoading] = useState(false);
+  const [photosLoading, setPhotosLoading] = useState(false);
+  const [laitanLoading, setLaitanLoading] = useState(false);
+
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  // Lightbox
   const [lightboxItems, setLightboxItems] = useState<LightboxItem[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const [videoRes, photoRes, laitanRes] = await Promise.all([
-          fetch("/api/tributes?type=video"),
-          fetch("/api/tributes?type=photo"),
-          fetch("/api/laitan-gallery"),
-        ]);
+  // ── Fetchers ──
 
-        const [videoData, photoData, laitanData] = await Promise.all([
-          videoRes.json(),
-          photoRes.json(),
-          laitanRes.json(),
-        ]);
-
-        if (videoRes.ok) {
-          setVideos((videoData.contributions as Contribution[]) || []);
-        }
-
-        if (photoRes.ok) {
-          setPhotos((photoData.contributions as Contribution[]) || []);
-        }
-
-        if (laitanRes.ok) {
-          setLaitanItems((laitanData.items as LaitanGalleryItem[]) || []);
-        }
-      } finally {
-        setLoading(false);
+  const fetchVideos = useCallback(async (offset: number) => {
+    setVideosLoading(true);
+    try {
+      const res = await fetch(`/api/tributes?type=video&limit=${PAGE_SIZE}&offset=${offset}`);
+      const data = await res.json();
+      if (res.ok) {
+        const items = (data.contributions as Contribution[]) || [];
+        setVideos((prev) => (offset === 0 ? items : [...prev, ...items]));
+        if (items.length < PAGE_SIZE) setVideosHasMore(false);
       }
+    } finally {
+      setVideosLoading(false);
     }
-
-    void load();
   }, []);
 
+  const fetchPhotos = useCallback(async (offset: number) => {
+    setPhotosLoading(true);
+    try {
+      const res = await fetch(`/api/tributes?type=photo&limit=${PAGE_SIZE}&offset=${offset}`);
+      const data = await res.json();
+      if (res.ok) {
+        const items = (data.contributions as Contribution[]) || [];
+        setPhotos((prev) => (offset === 0 ? items : [...prev, ...items]));
+        if (items.length < PAGE_SIZE) setPhotosHasMore(false);
+      }
+    } finally {
+      setPhotosLoading(false);
+    }
+  }, []);
+
+  const fetchLaitan = useCallback(async (offset: number) => {
+    setLaitanLoading(true);
+    try {
+      const res = await fetch(`/api/laitan-gallery?limit=${PAGE_SIZE}&offset=${offset}`);
+      const data = await res.json();
+      if (res.ok) {
+        const items = (data.items as LaitanGalleryItem[]) || [];
+        setLaitanItems((prev) => (offset === 0 ? items : [...prev, ...items]));
+        if (items.length < PAGE_SIZE) setLaitanHasMore(false);
+      }
+    } finally {
+      setLaitanLoading(false);
+    }
+  }, []);
+
+  // ── Initial load (first 12 of each) ──
+  useEffect(() => {
+    async function load() {
+      await Promise.all([fetchVideos(0), fetchPhotos(0), fetchLaitan(0)]);
+      setInitialLoading(false);
+    }
+    void load();
+  }, [fetchVideos, fetchPhotos, fetchLaitan]);
+
+  // Hash-based tab auto-select
   useEffect(() => {
     if (typeof window !== "undefined" && window.location.hash === "#laitan-photos") {
       setTab("laitan");
     }
   }, []);
 
+  // ── Lightbox keyboard & scroll lock ──
   useEffect(() => {
-    if (lightboxIndex === null) {
-      return;
-    }
+    if (lightboxIndex === null) return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setLightboxIndex(null);
-        return;
-      }
-
+      if (event.key === "Escape") { setLightboxIndex(null); return; }
       if (event.key === "ArrowLeft") {
-        setLightboxIndex((current) => current === null ? current : (current - 1 + lightboxItems.length) % lightboxItems.length);
+        setLightboxIndex((c) => c === null ? c : (c - 1 + lightboxItems.length) % lightboxItems.length);
       }
-
       if (event.key === "ArrowRight") {
-        setLightboxIndex((current) => current === null ? current : (current + 1) % lightboxItems.length);
+        setLightboxIndex((c) => c === null ? c : (c + 1) % lightboxItems.length);
       }
     }
 
@@ -107,6 +171,7 @@ export default function GalleryPage() {
     };
   }, [lightboxIndex, lightboxItems.length]);
 
+  // ── Tab config ──
   const tabConfig: { key: GalleryTab; label: string; mobileLabel: string; count?: number; icon: React.ReactNode }[] = [
     {
       key: "videos", label: "Videos", mobileLabel: "Videos", count: videos.length,
@@ -122,38 +187,30 @@ export default function GalleryPage() {
     },
   ];
 
+  // ── Lightbox items (built from currently loaded items) ──
   const photoLightboxItems = useMemo<LightboxItem[]>(
     () => photos.map((photo) => ({
-      id: photo.id,
-      kind: "image",
-      src: photo.asset_url || "",
+      id: photo.id, kind: "image", src: photo.asset_url || "",
       alt: photo.caption || `Photo by ${photo.submitter_name}`,
-      title: photo.submitter_name,
-      caption: photo.caption,
+      title: photo.submitter_name, caption: photo.caption,
     })),
     [photos]
   );
 
   const videoLightboxItems = useMemo<LightboxItem[]>(
     () => videos.map((video) => ({
-      id: video.id,
-      kind: "video",
-      src: video.asset_url || "",
+      id: video.id, kind: "video", src: video.asset_url || "",
       alt: `Video from ${video.submitter_name}`,
-      title: video.submitter_name,
-      caption: video.caption,
+      title: video.submitter_name, caption: video.caption,
     })),
     [videos]
   );
 
   const laitanLightboxItems = useMemo<LightboxItem[]>(
     () => laitanItems.map((item) => ({
-      id: item.id,
-      kind: item.media_type === "video" ? "video" : "image",
-      src: item.asset_url || "",
-      alt: item.caption || "Laitan's gallery",
-      title: "Laitan's Gallery",
-      caption: item.caption,
+      id: item.id, kind: item.media_type === "video" ? "video" : "image",
+      src: item.asset_url || "", alt: item.caption || "Laitan's gallery",
+      title: "Laitan's Gallery", caption: item.caption,
     })),
     [laitanItems]
   );
@@ -164,11 +221,10 @@ export default function GalleryPage() {
   }
 
   function goToPrevItem() {
-    setLightboxIndex((current) => current === null ? current : (current - 1 + lightboxItems.length) % lightboxItems.length);
+    setLightboxIndex((c) => c === null ? c : (c - 1 + lightboxItems.length) % lightboxItems.length);
   }
-
   function goToNextItem() {
-    setLightboxIndex((current) => current === null ? current : (current + 1) % lightboxItems.length);
+    setLightboxIndex((c) => c === null ? c : (c + 1) % lightboxItems.length);
   }
 
   return (
@@ -204,103 +260,150 @@ export default function GalleryPage() {
               </div>
             </div>
 
-            {loading ? (
+            {initialLoading ? (
               <div className="text-center py-16">
                 <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
             ) : (
               <>
+                {/* ── Videos Tab ── */}
                 {tab === "videos" && (
                   <div>
                     {videos.length === 0 ? <EmptyState type="videos" /> : (
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {videos.map((video, index) => (
-                          <button
-                            key={video.id}
-                            type="button"
-                            onClick={() => openLightbox(videoLightboxItems, index)}
-                            className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift"
-                          >
-                            <div className="relative aspect-video bg-purple-deep">
-                              <video src={video.asset_url || ""} className="w-full h-full object-cover" preload="metadata" muted />
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                                  <svg className="w-6 h-6 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                  </svg>
+                      <>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {videos.map((video, index) => (
+                            <button
+                              key={video.id}
+                              type="button"
+                              onClick={() => openLightbox(videoLightboxItems, index)}
+                              className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift"
+                            >
+                              <div className="relative aspect-video bg-purple-deep">
+                                <video
+                                  src={video.asset_url || ""}
+                                  className="w-full h-full object-cover"
+                                  preload="metadata"
+                                  poster={VIDEO_POSTER}
+                                  muted
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                  <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                    <svg className="w-6 h-6 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-
-                            <div className="p-4">
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <p className="font-semibold text-text-dark">{video.submitter_name}</p>
-                                  {video.caption && <p className="text-sm text-text-muted mt-1">{video.caption}</p>}
+                              <div className="p-4">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <p className="font-semibold text-text-dark">{video.submitter_name}</p>
+                                    {video.caption && <p className="text-sm text-text-muted mt-1">{video.caption}</p>}
+                                  </div>
+                                  <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold whitespace-nowrap">
+                                    {index + 1} / {videos.length}
+                                  </span>
                                 </div>
-                                <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold whitespace-nowrap">
-                                  {index + 1} / {videos.length}
-                                </span>
                               </div>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
+                            </button>
+                          ))}
+                        </div>
+                        {videosHasMore && (
+                          <LoadMoreButton loading={videosLoading} onClick={() => void fetchVideos(videos.length)} />
+                        )}
+                      </>
                     )}
                   </div>
                 )}
 
+                {/* ── Photos Tab ── */}
                 {tab === "photos" && (
                   <div>
                     {photos.length === 0 ? <EmptyState type="photos" /> : (
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {photos.map((photo, index) => (
-                          <button key={photo.id} type="button" onClick={() => openLightbox(photoLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
-                            <div className="aspect-square relative">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={photo.asset_url || ""} alt={photo.caption || `Photo by ${photo.submitter_name}`} className="w-full h-full object-cover" />
-                            </div>
-                            <div className="p-3">
-                              <p className="text-sm font-semibold text-text-dark">{photo.submitter_name}</p>
-                              {photo.caption && <p className="text-xs text-text-muted">{photo.caption}</p>}
-                            </div>
-                          </button>
-                        ))}
-                      </div>
+                      <>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {photos.map((photo, index) => (
+                            <button key={photo.id} type="button" onClick={() => openLightbox(photoLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
+                              <div className="aspect-square relative">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={photo.asset_url || ""}
+                                  alt={photo.caption || `Photo by ${photo.submitter_name}`}
+                                  className="w-full h-full object-cover"
+                                  loading="lazy"
+                                  style={{
+                                    backgroundImage: `url("${BLUR_PLACEHOLDER}")`,
+                                    backgroundSize: "cover",
+                                  }}
+                                />
+                              </div>
+                              <div className="p-3">
+                                <p className="text-sm font-semibold text-text-dark">{photo.submitter_name}</p>
+                                {photo.caption && <p className="text-xs text-text-muted">{photo.caption}</p>}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        {photosHasMore && (
+                          <LoadMoreButton loading={photosLoading} onClick={() => void fetchPhotos(photos.length)} />
+                        )}
+                      </>
                     )}
                   </div>
                 )}
 
+                {/* ── Laitan's Gallery Tab ── */}
                 {tab === "laitan" && (
                   <div>
                     <div className="text-center mb-8">
                       <p className="text-text-muted">A personal collection curated by the host</p>
                     </div>
                     {laitanItems.length === 0 ? <EmptyState type="media" /> : (
-                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {laitanItems.map((item, index) => (
-                          <button key={item.id} type="button" onClick={() => openLightbox(laitanLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
-                            <div className="aspect-square relative">
-                              {item.media_type === "video" ? (
-                                <div className="w-full h-full relative bg-purple-deep">
-                                  <video src={item.asset_url || ""} className="w-full h-full object-cover" preload="metadata" muted />
-                                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                    <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                                      <svg className="w-5 h-5 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                      <>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                          {laitanItems.map((item, index) => (
+                            <button key={item.id} type="button" onClick={() => openLightbox(laitanLightboxItems, index)} className="text-left bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden hover-lift">
+                              <div className="aspect-square relative">
+                                {item.media_type === "video" ? (
+                                  <div className="w-full h-full relative bg-purple-deep">
+                                    <video
+                                      src={item.asset_url || ""}
+                                      className="w-full h-full object-cover"
+                                      preload="metadata"
+                                      poster={VIDEO_POSTER}
+                                      muted
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                        <svg className="w-5 h-5 text-purple-deep ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              ) : (
-                                /* eslint-disable-next-line @next/next/no-img-element */
-                                <img src={item.asset_url || ""} alt={item.caption || "Laitan's gallery"} className="w-full h-full object-cover" />
+                                ) : (
+                                  /* eslint-disable-next-line @next/next/no-img-element */
+                                  <img
+                                    src={item.asset_url || ""}
+                                    alt={item.caption || "Laitan's gallery"}
+                                    className="w-full h-full object-cover"
+                                    loading="lazy"
+                                    style={{
+                                      backgroundImage: `url("${BLUR_PLACEHOLDER}")`,
+                                      backgroundSize: "cover",
+                                    }}
+                                  />
+                                )}
+                              </div>
+                              {item.caption && (
+                                <div className="p-3"><p className="text-sm text-text-muted text-center">{item.caption}</p></div>
                               )}
-                            </div>
-                            {item.caption && (
-                              <div className="p-3"><p className="text-sm text-text-muted text-center">{item.caption}</p></div>
-                            )}
-                          </button>
-                        ))}
-                      </div>
+                            </button>
+                          ))}
+                        </div>
+                        {laitanHasMore && (
+                          <LoadMoreButton loading={laitanLoading} onClick={() => void fetchLaitan(laitanItems.length)} />
+                        )}
+                      </>
                     )}
                   </div>
                 )}
@@ -321,6 +424,7 @@ export default function GalleryPage() {
       </main>
       <Footer />
 
+      {/* ── Lightbox ── */}
       {lightboxIndex !== null && lightboxItems[lightboxIndex] && (
         <div
           className="fixed inset-0 z-[80] bg-black/90 flex items-center justify-center"
@@ -328,21 +432,9 @@ export default function GalleryPage() {
           onTouchStart={(event) => setTouchStartX(event.changedTouches[0]?.clientX ?? null)}
           onTouchEnd={(event) => {
             const endX = event.changedTouches[0]?.clientX ?? null;
-
-            if (touchStartX === null || endX === null) {
-              setTouchStartX(null);
-              return;
-            }
-
+            if (touchStartX === null || endX === null) { setTouchStartX(null); return; }
             const diff = touchStartX - endX;
-            if (Math.abs(diff) > 40) {
-              if (diff > 0) {
-                goToNextItem();
-              } else {
-                goToPrevItem();
-              }
-            }
-
+            if (Math.abs(diff) > 40) { diff > 0 ? goToNextItem() : goToPrevItem(); }
             setTouchStartX(null);
           }}
         >

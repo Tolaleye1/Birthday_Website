@@ -13,7 +13,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type");
     const limit = searchParams.get("limit");
+    const offset = searchParams.get("offset");
     const parsedLimit = limit ? Number(limit) : null;
+    const parsedOffset = offset ? Number(offset) : 0;
 
     const supabase = createServerClient();
     let query = supabase
@@ -27,7 +29,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (parsedLimit && Number.isFinite(parsedLimit) && parsedLimit > 0) {
-      query = query.limit(parsedLimit);
+      query = query.range(parsedOffset, parsedOffset + parsedLimit - 1);
     }
 
     const { data, error } = await query;

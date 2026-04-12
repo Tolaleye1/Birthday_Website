@@ -24,10 +24,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ slots: data ?? [] });
     }
 
-    const { data, error } = await supabase
+    const url = new URL(req.url);
+    const galLimit = url.searchParams.get("limit");
+    const galOffset = url.searchParams.get("offset");
+    const parsedGalLimit = galLimit ? Number(galLimit) : null;
+    const parsedGalOffset = galOffset ? Number(galOffset) : 0;
+
+    let galQuery = supabase
       .from("laitan_gallery")
       .select("*")
       .order("display_order", { ascending: true });
+
+    if (parsedGalLimit && Number.isFinite(parsedGalLimit) && parsedGalLimit > 0) {
+      galQuery = galQuery.range(parsedGalOffset, parsedGalOffset + parsedGalLimit - 1);
+    }
+
+    const { data, error } = await galQuery;
 
     if (error) {
       console.error("Laitan gallery fetch error:", error);

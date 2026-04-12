@@ -134,6 +134,7 @@ export default function LaitanYearsLightbox({ slots }: LaitanYearsLightboxProps)
                     src={slot.asset_url}
                     alt={slot.caption || `Laitan Throughout the Years photo ${slot.position}`}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    loading="lazy"
                   />
                 </div>
               </button>
