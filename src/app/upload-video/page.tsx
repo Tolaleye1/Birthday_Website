@@ -31,7 +31,7 @@ export default function UploadVideoPage() {
       return;
     }
     if (f.size > MAX_VIDEO_SIZE_BYTES) {
-      setError("Video must be under 100 MB.");
+      setError("Video must be under 50 MB.");
       return;
     }
 
@@ -223,7 +223,7 @@ export default function UploadVideoPage() {
                     ) : (
                       <>
                         <p className="font-semibold text-text-dark mb-1">Click or tap to select your video</p>
-                        <p className="text-sm text-text-muted">MP4 or MOV, up to 100MB</p>
+                        <p className="text-sm text-text-muted">MP4 or MOV, up to 50MB</p>
                       </>
                     )}
                     <input

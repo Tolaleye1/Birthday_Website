@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid video format. Use MP4, MOV, or WebM." }, { status: 400 });
       }
       if (fileSize > MAX_VIDEO_SIZE_BYTES) {
-        return NextResponse.json({ error: "Video must be under 100 MB." }, { status: 400 });
+        return NextResponse.json({ error: "Video must be under 50 MB." }, { status: 400 });
       }
       if (durationSeconds && durationSeconds > MAX_VIDEO_DURATION_SECONDS) {
         return NextResponse.json({ error: "Video must be 90 seconds or shorter." }, { status: 400 });
