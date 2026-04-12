@@ -43,7 +43,7 @@ export interface LaitanYearSlot {
 
 /* ── Validation Constants ── */
 export const MAX_VIDEO_DURATION_SECONDS = 90;
-export const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
+export const MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 export const MAX_PHOTO_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 export const ALLOWED_VIDEO_TYPES = [
   "video/mp4",
