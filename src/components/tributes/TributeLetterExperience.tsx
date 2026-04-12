@@ -267,6 +267,7 @@ export default function TributeLetterExperience({
                 <video
                   src={selectedTribute.asset_url}
                   controls
+                  preload="metadata"
                   className="mt-6 w-full rounded-xl"
                   style={{ maxHeight: "240px" }}
                 />

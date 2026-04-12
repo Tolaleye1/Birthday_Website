@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import type { Contribution, LaitanGalleryItem, LaitanYearSlot } from "@/lib/types";
+import { compressImage } from "@/lib/compressImage";
+import { ALLOWED_PHOTO_TYPES } from "@/lib/types";
 
 type AdminTab = "all" | "text" | "photo" | "video";
 
@@ -19,6 +21,8 @@ export default function AdminPage() {
   const [yearSlotFiles, setYearSlotFiles] = useState<Record<number, File | null>>({});
   const [yearSlotCaptions, setYearSlotCaptions] = useState<Record<number, string>>({});
   const [yearSlotUploading, setYearSlotUploading] = useState<Record<number, boolean>>({});
+  const [laitanCompressing, setLaitanCompressing] = useState(false);
+  const [yearSlotCompressing, setYearSlotCompressing] = useState<Record<number, boolean>>({});
 
   const loadData = useCallback(async () => {
     const [contribRes, laitanRes, yearsRes] = await Promise.all([
@@ -123,18 +127,29 @@ export default function AdminPage() {
     const file = laitanFileRef.current?.files?.[0];
     if (!file) return;
     setLaitanUploading(true);
+
+    // Compress if it's an image
+    let uploadFile = file;
+    if (ALLOWED_PHOTO_TYPES.includes(file.type)) {
+      try {
+        setLaitanCompressing(true);
+        uploadFile = await compressImage(file);
+      } catch { /* use original if compression fails */ }
+      setLaitanCompressing(false);
+    }
+
     try {
       // Get signed URL
       const res = await fetch("/api/laitan-gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caption: laitanCaption, fileName: file.name, mimeType: file.type, fileSize: file.size }),
+        body: JSON.stringify({ caption: laitanCaption, fileName: uploadFile.name, mimeType: uploadFile.type, fileSize: uploadFile.size }),
       });
       const data = await res.json();
       if (!res.ok) { alert(data.error); setLaitanUploading(false); return; }
 
       // Upload
-      const uploadRes = await fetch(data.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      const uploadRes = await fetch(data.uploadUrl, { method: "PUT", headers: { "Content-Type": uploadFile.type }, body: uploadFile });
       if (!uploadRes.ok) {
         alert("Upload failed.");
         setLaitanUploading(false);
@@ -181,15 +196,25 @@ export default function AdminPage() {
 
     setYearSlotUploading((prev) => ({ ...prev, [position]: true }));
 
+    // Compress if it's an image
+    let uploadFile = file;
+    if (ALLOWED_PHOTO_TYPES.includes(file.type)) {
+      try {
+        setYearSlotCompressing((prev) => ({ ...prev, [position]: true }));
+        uploadFile = await compressImage(file);
+      } catch { /* use original if compression fails */ }
+      setYearSlotCompressing((prev) => ({ ...prev, [position]: false }));
+    }
+
     try {
       const prepareRes = await fetch("/api/laitan-gallery?scope=years", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           position,
-          fileName: file.name,
-          mimeType: file.type,
-          fileSize: file.size,
+          fileName: uploadFile.name,
+          mimeType: uploadFile.type,
+          fileSize: uploadFile.size,
         }),
       });
 
@@ -201,8 +226,8 @@ export default function AdminPage() {
 
       const uploadRes = await fetch(prepareData.uploadUrl, {
         method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
+        headers: { "Content-Type": uploadFile.type },
+        body: uploadFile,
       });
 
       if (!uploadRes.ok) {
@@ -383,7 +408,7 @@ export default function AdminPage() {
                             disabled={yearSlotUploading[position]}
                             className="flex-1 bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold px-4 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50"
                           >
-                            {yearSlotUploading[position] ? "Saving..." : slot ? "Replace" : "Upload"}
+                            {yearSlotCompressing[position] ? "Optimising..." : yearSlotUploading[position] ? "Saving..." : slot ? "Replace" : "Upload"}
                           </button>
                           <button
                             type="button"
@@ -416,7 +441,7 @@ export default function AdminPage() {
                 <input ref={laitanFileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" className="text-sm file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gold file:text-purple-deep file:font-semibold file:text-sm" />
                 <button onClick={handleLaitanUpload} disabled={laitanUploading}
                   className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-6 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50">
-                  {laitanUploading ? "Uploading..." : "Upload"}
+                  {laitanCompressing ? "Optimising..." : laitanUploading ? "Uploading..." : "Upload"}
                 </button>
               </div>
 

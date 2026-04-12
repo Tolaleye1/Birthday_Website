@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ALLOWED_PHOTO_TYPES, MAX_PHOTO_SIZE_BYTES, ALLOWED_VIDEO_TYPES, MAX_VIDEO_SIZE_BYTES, MAX_VIDEO_DURATION_SECONDS } from "@/lib/types";
+import { compressImage } from "@/lib/compressImage";
 
 type TributeTab = "text" | "photo" | "video";
 
@@ -17,6 +18,7 @@ export default function SubmitTributePage() {
   const [duration, setDuration] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [progress, setProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,7 @@ export default function SubmitTributePage() {
       setFile(f);
     } else if (tab === "video") {
       if (!ALLOWED_VIDEO_TYPES.includes(f.type)) { setError("Please select a valid video (MP4, MOV, or WebM)."); return; }
+      if (f.size > 50 * 1024 * 1024) { setError("This video is too large. Please use a shorter or lower quality clip (max 50MB)."); return; }
       if (f.size > MAX_VIDEO_SIZE_BYTES) { setError("Video must be under 100 MB."); return; }
       const video = document.createElement("video");
       video.preload = "metadata";
@@ -75,6 +78,17 @@ export default function SubmitTributePage() {
     // Photo or Video upload flow
     if (!file) { setError(`Please select a ${tab}.`); return; }
     setSubmitting(true);
+
+    // Compress images before uploading
+    let uploadFile = file;
+    if (tab === "photo") {
+      try {
+        setCompressing(true);
+        uploadFile = await compressImage(file);
+      } catch { /* use original if compression fails */ }
+      setCompressing(false);
+    }
+
     setProgress(10);
 
     try {
@@ -83,7 +97,7 @@ export default function SubmitTributePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: tab, submitterName: name.trim(), caption: caption.trim() || undefined,
-          fileName: file.name, mimeType: file.type, fileSize: file.size,
+          fileName: uploadFile.name, mimeType: uploadFile.type, fileSize: uploadFile.size,
           durationSeconds: tab === "video" ? duration : undefined,
         }),
       });
@@ -91,7 +105,7 @@ export default function SubmitTributePage() {
       if (!validateRes.ok) { setError(validateData.error); setSubmitting(false); return; }
       setProgress(30);
 
-      const uploadRes = await fetch(validateData.uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      const uploadRes = await fetch(validateData.uploadUrl, { method: "PUT", headers: { "Content-Type": uploadFile.type }, body: uploadFile });
       if (!uploadRes.ok) { setError("Upload failed."); setSubmitting(false); return; }
       setProgress(70);
 
@@ -100,7 +114,7 @@ export default function SubmitTributePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: tab, submitterName: name.trim(), caption: caption.trim() || undefined,
-          assetPath: validateData.assetPath, mimeType: file.type, fileSize: file.size,
+          assetPath: validateData.assetPath, mimeType: uploadFile.type, fileSize: uploadFile.size,
           durationSeconds: tab === "video" ? duration : undefined,
         }),
       });
@@ -218,7 +232,11 @@ export default function SubmitTributePage() {
 
                 {error && <div className="bg-red-50 text-red-700 rounded-xl p-4 text-sm">{error}</div>}
 
-                {submitting && progress > 0 && (
+                {compressing && (
+                  <p className="text-sm text-gold font-semibold text-center animate-pulse">Optimising image…</p>
+                )}
+
+                {submitting && !compressing && progress > 0 && (
                   <div className="w-full bg-blush rounded-full h-2">
                     <div className="bg-gold h-2 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
                   </div>

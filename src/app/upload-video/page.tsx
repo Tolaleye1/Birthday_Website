@@ -26,6 +26,10 @@ export default function UploadVideoPage() {
       setError("Please select a valid video file (MP4, MOV, or WebM).");
       return;
     }
+    if (f.size > 50 * 1024 * 1024) {
+      setError("This video is too large. Please use a shorter or lower quality clip (max 50MB).");
+      return;
+    }
     if (f.size > MAX_VIDEO_SIZE_BYTES) {
       setError("Video must be under 100 MB.");
       return;

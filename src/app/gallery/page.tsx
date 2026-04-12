@@ -366,6 +366,7 @@ export default function GalleryPage() {
               <video
                 src={lightboxItems[lightboxIndex].src}
                 controls
+                preload="metadata"
                 className="max-h-[90vh] max-w-[90vw] object-contain"
                 autoPlay
               />
