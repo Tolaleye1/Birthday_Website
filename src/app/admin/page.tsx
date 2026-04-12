@@ -408,7 +408,7 @@ export default function AdminPage() {
                             disabled={yearSlotUploading[position]}
                             className="flex-1 bg-purple-primary hover:bg-purple-primary/90 text-white font-semibold px-4 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50"
                           >
-                            {yearSlotCompressing[position] ? "Optimising..." : yearSlotUploading[position] ? "Saving..." : slot ? "Replace" : "Upload"}
+                            {yearSlotCompressing[position] ? "Preparing your photo..." : yearSlotUploading[position] ? "Saving..." : slot ? "Replace" : "Upload"}
                           </button>
                           <button
                             type="button"
@@ -441,7 +441,7 @@ export default function AdminPage() {
                 <input ref={laitanFileRef} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" className="text-sm file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gold file:text-purple-deep file:font-semibold file:text-sm" />
                 <button onClick={handleLaitanUpload} disabled={laitanUploading}
                   className="bg-gold hover:bg-gold/90 text-purple-deep font-semibold px-6 py-2 rounded-[var(--radius-pill)] text-sm transition-all disabled:opacity-50">
-                  {laitanCompressing ? "Optimising..." : laitanUploading ? "Uploading..." : "Upload"}
+                  {laitanCompressing ? "Preparing your photo..." : laitanUploading ? "Uploading..." : "Upload"}
                 </button>
               </div>
 

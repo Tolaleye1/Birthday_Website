@@ -233,7 +233,7 @@ export default function SubmitTributePage() {
                 {error && <div className="bg-red-50 text-red-700 rounded-xl p-4 text-sm">{error}</div>}
 
                 {compressing && (
-                  <p className="text-sm text-gold font-semibold text-center animate-pulse">Optimising image…</p>
+                  <p className="text-sm text-gold font-semibold text-center animate-pulse">Preparing your photo...</p>
                 )}
 
                 {submitting && !compressing && progress > 0 && (
