@@ -48,6 +48,19 @@ CREATE TABLE IF NOT EXISTS admin_requests (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Site-wide visibility settings (Amendment 12)
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO site_settings (key, value) VALUES
+  ('tributes_visible', 'false'),
+  ('photos_visible', 'false'),
+  ('videos_visible', 'false')
+ON CONFLICT (key) DO NOTHING;
+
 -- Index for public queries (non-deleted, sorted by recency)
 CREATE INDEX IF NOT EXISTS idx_contributions_public 
   ON contributions (is_deleted, type, created_at DESC);

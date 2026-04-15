@@ -5,19 +5,30 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import TributeLetterExperience from "@/components/tributes/TributeLetterExperience";
+import ComingSoonBlock from "@/components/ComingSoonBlock";
 import type { Contribution } from "@/lib/types";
 
 export default function TributesPage() {
   const [tributes, setTributes] = useState<Contribution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tributesVisible, setTributesVisible] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/api/tributes?type=text");
-        const data = await res.json();
-        if (res.ok) {
-          setTributes((data.contributions as Contribution[]) || []);
+        const [tributeRes, settingsRes] = await Promise.all([
+          fetch("/api/tributes?type=text"),
+          fetch("/api/site-settings"),
+        ]);
+
+        const tributeData = await tributeRes.json();
+        if (tributeRes.ok) {
+          setTributes((tributeData.contributions as Contribution[]) || []);
+        }
+
+        if (settingsRes.ok) {
+          const settings = await settingsRes.json();
+          setTributesVisible(settings.tributes_visible === true);
         }
       } finally {
         setLoading(false);
@@ -44,6 +55,8 @@ export default function TributesPage() {
               <div className="text-center py-16">
                 <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
+            ) : !tributesVisible ? (
+              <ComingSoonBlock section="tributes" />
             ) : tributes.length === 0 ? (
               <div className="text-center py-16">
                 <div className="w-20 h-20 rounded-full bg-blush-light mx-auto mb-6 flex items-center justify-center">

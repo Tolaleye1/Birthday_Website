@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ComingSoonBlock from "@/components/ComingSoonBlock";
 import type { Contribution, LaitanGalleryItem } from "@/lib/types";
 
 type GalleryTab = "videos" | "photos" | "laitan";
@@ -79,6 +80,8 @@ export default function GalleryPage() {
   const [laitanLoading, setLaitanLoading] = useState(false);
 
   const [initialLoading, setInitialLoading] = useState(true);
+  const [photosVisible, setPhotosVisible] = useState(true);
+  const [videosVisible, setVideosVisible] = useState(true);
 
   // Lightbox
   const [lightboxItems, setLightboxItems] = useState<LightboxItem[]>([]);
@@ -132,10 +135,21 @@ export default function GalleryPage() {
     }
   }, []);
 
-  // ── Initial load (first 12 of each) ──
+  // ── Initial load (first 12 of each + visibility) ──
   useEffect(() => {
     async function load() {
+      const settingsPromise = fetch("/api/site-settings")
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null);
+
       await Promise.all([fetchVideos(0), fetchPhotos(0), fetchLaitan(0)]);
+
+      const settings = await settingsPromise;
+      if (settings) {
+        setPhotosVisible(settings.photos_visible === true);
+        setVideosVisible(settings.videos_visible === true);
+      }
+
       setInitialLoading(false);
     }
     void load();
@@ -269,7 +283,7 @@ export default function GalleryPage() {
                 {/* ── Videos Tab ── */}
                 {tab === "videos" && (
                   <div>
-                    {videos.length === 0 ? <EmptyState type="videos" /> : (
+                    {!videosVisible ? <ComingSoonBlock section="videos" /> : videos.length === 0 ? <EmptyState type="videos" /> : (
                       <>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {videos.map((video, index) => (
@@ -320,7 +334,7 @@ export default function GalleryPage() {
                 {/* ── Photos Tab ── */}
                 {tab === "photos" && (
                   <div>
-                    {photos.length === 0 ? <EmptyState type="photos" /> : (
+                    {!photosVisible ? <ComingSoonBlock section="photos" /> : photos.length === 0 ? <EmptyState type="photos" /> : (
                       <>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                           {photos.map((photo, index) => (

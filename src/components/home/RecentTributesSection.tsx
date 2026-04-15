@@ -64,7 +64,28 @@ async function getRecentTributes(): Promise<Contribution[]> {
   }
 }
 
+async function getTributesVisible(): Promise<boolean> {
+  try {
+    const supabase = createServerClient();
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "tributes_visible")
+      .single();
+    return data?.value === "true";
+  } catch {
+    return false;
+  }
+}
+
 export default async function RecentTributesSection() {
+  const tributesVisible = await getTributesVisible();
+
+  // If tributes are hidden, render nothing — hide entire section from homepage
+  if (!tributesVisible) {
+    return null;
+  }
+
   const tributes = await getRecentTributes();
 
   return (

@@ -9,6 +9,12 @@ import { ALLOWED_PHOTO_TYPES } from "@/lib/types";
 
 type AdminTab = "all" | "text" | "photo" | "video";
 
+type VisibilitySettings = {
+  tributes_visible: boolean;
+  photos_visible: boolean;
+  videos_visible: boolean;
+};
+
 export default function AdminPage() {
   const [tab, setTab] = useState<AdminTab>("all");
   const [contributions, setContributions] = useState<Contribution[]>([]);
@@ -23,6 +29,49 @@ export default function AdminPage() {
   const [yearSlotUploading, setYearSlotUploading] = useState<Record<number, boolean>>({});
   const [laitanCompressing, setLaitanCompressing] = useState(false);
   const [yearSlotCompressing, setYearSlotCompressing] = useState<Record<number, boolean>>({});
+
+  // ─── Visibility Controls ───
+  const [visibility, setVisibility] = useState<VisibilitySettings>({
+    tributes_visible: false,
+    photos_visible: false,
+    videos_visible: false,
+  });
+  const [visibilityToggling, setVisibilityToggling] = useState<string | null>(null);
+
+  // Fetch visibility settings on mount
+  useEffect(() => {
+    async function loadVisibility() {
+      try {
+        const res = await fetch("/api/site-settings");
+        if (res.ok) {
+          const data = (await res.json()) as VisibilitySettings;
+          setVisibility(data);
+        }
+      } catch { /* ignore */ }
+    }
+    void loadVisibility();
+  }, []);
+
+  const handleVisibilityToggle = async (key: keyof VisibilitySettings) => {
+    const newValue = !visibility[key];
+    // Optimistic update
+    setVisibility((prev) => ({ ...prev, [key]: newValue }));
+    setVisibilityToggling(key);
+    try {
+      const res = await fetch("/api/site-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, value: newValue }),
+      });
+      if (!res.ok) {
+        // Revert on failure
+        setVisibility((prev) => ({ ...prev, [key]: !newValue }));
+      }
+    } catch {
+      setVisibility((prev) => ({ ...prev, [key]: !newValue }));
+    }
+    setVisibilityToggling(null);
+  };
 
   const loadData = useCallback(async () => {
     const [contribRes, laitanRes, yearsRes] = await Promise.all([
@@ -285,6 +334,12 @@ export default function AdminPage() {
   const filtered = tab === "all" ? contributions : contributions.filter((c) => c.type === tab);
   const yearSlotMap = new Map(yearSlots.map((slot) => [slot.position, slot]));
 
+  const visibilityRows: { key: keyof VisibilitySettings; label: string }[] = [
+    { key: "tributes_visible", label: "Tributes Wall" },
+    { key: "photos_visible", label: "Guest Photos" },
+    { key: "videos_visible", label: "Guest Videos" },
+  ];
+
   return (
     <>
       <Navbar />
@@ -302,6 +357,45 @@ export default function AdminPage() {
 
         <section className="py-8 md:py-12 px-4">
           <div className="max-w-6xl mx-auto">
+            {/* ─── Visibility Controls ─── */}
+            <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-6 md:p-8 mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <svg className="w-5 h-5 text-purple-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark">Visibility Controls</h2>
+              </div>
+              <p className="text-text-muted text-sm mb-6">
+                Toggle sections on or off. Hidden sections show a &ldquo;coming soon&rdquo; screen to visitors. Laitan&apos;s Gallery is always visible.
+              </p>
+              <div className="space-y-4">
+                {visibilityRows.map(({ key, label }) => (
+                  <div key={key} className="flex items-center justify-between py-3 px-4 rounded-2xl bg-ivory/50 border border-gold-light/20">
+                    <span className="font-[family-name:var(--font-body)] font-bold text-text-dark text-sm">{label}</span>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-xs font-semibold ${visibility[key] ? "text-green-600" : "text-text-muted"}`}>
+                        {visibility[key] ? "Visible" : "Hidden"}
+                      </span>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={visibility[key]}
+                        aria-label={`Toggle ${label}`}
+                        disabled={visibilityToggling === key}
+                        onClick={() => void handleVisibilityToggle(key)}
+                        className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-primary/40 disabled:opacity-60 ${visibility[key] ? "bg-purple-primary" : "bg-gray-300"}`}
+                      >
+                        <span
+                          className={`inline-block h-5 w-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ${visibility[key] ? "translate-x-6" : "translate-x-1"}`}
+                        />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Filter Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap">
               {(["all", "text", "photo", "video"] as AdminTab[]).map((t) => (
