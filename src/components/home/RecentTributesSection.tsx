@@ -16,6 +16,8 @@ const placeholderTributes: Contribution[] = [
     asset_size_bytes: null,
     video_duration_seconds: null,
     is_deleted: false,
+    is_pinned: false,
+    pin_order: null,
     created_at: "2026-04-07T10:00:00.000Z",
   },
   {
@@ -30,6 +32,8 @@ const placeholderTributes: Contribution[] = [
     asset_size_bytes: null,
     video_duration_seconds: null,
     is_deleted: false,
+    is_pinned: false,
+    pin_order: null,
     created_at: "2026-04-07T07:00:00.000Z",
   },
   {
@@ -44,6 +48,8 @@ const placeholderTributes: Contribution[] = [
     asset_size_bytes: null,
     video_duration_seconds: null,
     is_deleted: false,
+    is_pinned: false,
+    pin_order: null,
     created_at: "2026-04-06T12:00:00.000Z",
   },
 ];

@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import type { Contribution, LaitanGalleryItem, LaitanYearSlot } from "@/lib/types";
 import { compressImage } from "@/lib/compressImage";
 import { ALLOWED_PHOTO_TYPES } from "@/lib/types";
+import SortablePinnedCard from "@/components/admin/SortablePinnedCard";
 
 type AdminTab = "all" | "text" | "photo" | "video";
 
@@ -21,6 +22,7 @@ export default function AdminPage() {
   const [laitanItems, setLaitanItems] = useState<LaitanGalleryItem[]>([]);
   const [yearSlots, setYearSlots] = useState<LaitanYearSlot[]>([]);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [pinning, setPinning] = useState<string | null>(null);
   const laitanFileRef = useRef<HTMLInputElement>(null);
   const [laitanCaption, setLaitanCaption] = useState("");
   const [laitanUploading, setLaitanUploading] = useState(false);
@@ -29,6 +31,7 @@ export default function AdminPage() {
   const [yearSlotUploading, setYearSlotUploading] = useState<Record<number, boolean>>({});
   const [laitanCompressing, setLaitanCompressing] = useState(false);
   const [yearSlotCompressing, setYearSlotCompressing] = useState<Record<number, boolean>>({});
+  const [draggedPinnedId, setDraggedPinnedId] = useState<string | null>(null);
 
   // ─── Visibility Controls ───
   const [visibility, setVisibility] = useState<VisibilitySettings>({
@@ -330,8 +333,85 @@ export default function AdminPage() {
     }
   }
 
-  // Filter contributions
-  const filtered = tab === "all" ? contributions : contributions.filter((c) => c.type === tab);
+  // ─── Pinned / Unpinned Split ───
+  const pinnedContributions = contributions
+    .filter((c) => c.is_pinned)
+    .sort((a, b) => (a.pin_order ?? 0) - (b.pin_order ?? 0));
+  const unpinnedContributions = contributions.filter((c) => !c.is_pinned);
+  const unpinnedFiltered = tab === "all"
+    ? unpinnedContributions
+    : unpinnedContributions.filter((c) => c.type === tab);
+
+  const handleTogglePin = async (id: string, currentlyPinned: boolean) => {
+    setPinning(id);
+    setContributions((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        if (currentlyPinned) {
+          return { ...c, is_pinned: false, pin_order: null };
+        }
+        const maxOrder = Math.max(0, ...prev.filter((x) => x.is_pinned).map((x) => x.pin_order ?? 0));
+        return { ...c, is_pinned: true, pin_order: maxOrder + 1 };
+      })
+    );
+    try {
+      const res = await fetch(`/api/tributes/${id}/pin`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_pinned: !currentlyPinned }),
+      });
+      if (!res.ok) await loadData();
+    } catch {
+      await loadData();
+    }
+    setPinning(null);
+  };
+
+  const updatePinnedOrder = async (orderedIds: string[]) => {
+    setContributions((prev) => {
+      const updated = [...prev];
+      orderedIds.forEach((pinId: string, index: number) => {
+        const idx = updated.findIndex((contribution: Contribution) => contribution.id === pinId);
+        if (idx !== -1) updated[idx] = { ...updated[idx], pin_order: index };
+      });
+      return updated;
+    });
+    try {
+      const response = await fetch("/api/tributes/pin-order", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderedIds }),
+      });
+      if (!response.ok) {
+        await loadData();
+      }
+    } catch {
+      await loadData();
+    }
+  };
+
+  const handlePinnedDrop = async (targetId: string) => {
+    if (!draggedPinnedId || draggedPinnedId === targetId) {
+      setDraggedPinnedId(null);
+      return;
+    }
+
+    const oldIndex = pinnedContributions.findIndex((contribution: Contribution) => contribution.id === draggedPinnedId);
+    const newIndex = pinnedContributions.findIndex((contribution: Contribution) => contribution.id === targetId);
+
+    if (oldIndex === -1 || newIndex === -1) {
+      setDraggedPinnedId(null);
+      return;
+    }
+
+    const reordered = [...pinnedContributions];
+    const [movedContribution] = reordered.splice(oldIndex, 1);
+    reordered.splice(newIndex, 0, movedContribution);
+
+    setDraggedPinnedId(null);
+    await updatePinnedOrder(reordered.map((contribution: Contribution) => contribution.id));
+  };
+
   const yearSlotMap = new Map(yearSlots.map((slot) => [slot.position, slot]));
 
   const visibilityRows: { key: keyof VisibilitySettings; label: string }[] = [
@@ -396,20 +476,52 @@ export default function AdminPage() {
               </div>
             </div>
 
+            {/* ─── Pinned Tributes ─── */}
+            {pinnedContributions.length > 0 && (
+              <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] p-6 md:p-8 mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg className="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6h2v-6h5v-2l-2-2z"/></svg>
+                  <h2 className="font-[family-name:var(--font-display)] text-lg font-bold text-text-dark">Pinned Tributes</h2>
+                  <span className="text-xs text-text-muted">({pinnedContributions.length})</span>
+                </div>
+                <p className="text-text-muted text-sm mb-4">Drag to reorder. These appear at the top of the Tributes Wall.</p>
+                <div className="space-y-2">
+                  {pinnedContributions.map((contribution) => (
+                    <SortablePinnedCard
+                      key={contribution.id}
+                      contribution={contribution}
+                      onTogglePin={(id, pinned) => void handleTogglePin(id, pinned)}
+                      isPinning={pinning === contribution.id}
+                      isDragging={draggedPinnedId === contribution.id}
+                      onDragStart={setDraggedPinnedId}
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={(id) => void handlePinnedDrop(id)}
+                      onDragEnd={() => setDraggedPinnedId(null)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ─── All Tributes ─── */}
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="font-[family-name:var(--font-display)] text-lg font-bold text-text-dark">All Tributes</h2>
+            </div>
+
             {/* Filter Tabs */}
             <div className="flex gap-2 mb-6 flex-wrap">
               {(["all", "text", "photo", "video"] as AdminTab[]).map((t) => (
                 <button key={t} onClick={() => setTab(t)}
                   className={`px-4 py-2 rounded-[var(--radius-pill)] text-sm font-medium transition-all ${tab === t ? "bg-purple-primary text-white" : "bg-white text-text-muted hover:text-text-dark border border-gold-light/30"}`}>
                   {t === "all" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)}
-                  <span className="ml-1 text-xs opacity-70">({t === "all" ? contributions.length : contributions.filter((c) => c.type === t).length})</span>
+                  <span className="ml-1 text-xs opacity-70">({t === "all" ? unpinnedContributions.length : unpinnedContributions.filter((c) => c.type === t).length})</span>
                 </button>
               ))}
             </div>
 
             {/* Submissions Table */}
             <div className="bg-white rounded-[var(--radius-card)] shadow-[var(--shadow-card)] overflow-hidden mb-10">
-              {filtered.length === 0 ? (
+              {unpinnedFiltered.length === 0 ? (
                 <div className="p-8 text-center text-text-muted">No submissions in this category.</div>
               ) : (
                 <div className="overflow-x-auto">
@@ -424,7 +536,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filtered.map((c) => (
+                      {unpinnedFiltered.map((c) => (
                         <tr key={c.id} className="border-b border-gold-light/20 hover:bg-ivory/50">
                           <td className="p-4 font-medium text-text-dark">{c.submitter_name}</td>
                           <td className="p-4">
@@ -435,10 +547,18 @@ export default function AdminPage() {
                           <td className="p-4 text-text-muted max-w-xs truncate">{c.message || c.caption || "-"}</td>
                           <td className="p-4 text-text-muted whitespace-nowrap">{new Date(c.created_at).toLocaleDateString()}</td>
                           <td className="p-4 text-right">
-                            <button onClick={() => handleDelete(c.id)} disabled={deleting === c.id}
-                              className="text-red-500 hover:text-red-700 text-xs font-medium transition-colors disabled:opacity-50">
-                              {deleting === c.id ? "Deleting..." : "Delete"}
-                            </button>
+                            <div className="flex items-center justify-end gap-3">
+                              <button onClick={() => void handleTogglePin(c.id, false)} disabled={pinning === c.id}
+                                className="text-text-muted hover:text-rose-500 transition-colors disabled:opacity-50" title="Pin tribute">
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15.75 10.5V5.75A1.75 1.75 0 0014 4H9.5a1.75 1.75 0 00-1.75 1.75v4.75L5.5 13v1h5.5v7h2v-7h5.5v-1l-2.75-2.5Z" />
+                                </svg>
+                              </button>
+                              <button onClick={() => handleDelete(c.id)} disabled={deleting === c.id}
+                                className="text-red-500 hover:text-red-700 text-xs font-medium transition-colors disabled:opacity-50">
+                                {deleting === c.id ? "Deleting..." : "Delete"}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

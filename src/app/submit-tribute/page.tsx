@@ -116,6 +116,7 @@ export default function SubmitTributePage() {
           type: tab, submitterName: name.trim(), caption: caption.trim() || undefined,
           assetPath: validateData.assetPath, mimeType: uploadFile.type, fileSize: uploadFile.size,
           durationSeconds: tab === "video" ? duration : undefined,
+          fileName: file.name,
         }),
       });
       const confirmData = await confirmRes.json();

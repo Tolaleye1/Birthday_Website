@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS contributions (
   asset_size_bytes BIGINT,
   video_duration_seconds INTEGER,
   is_deleted BOOLEAN DEFAULT FALSE,
+  is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
+  pin_order INTEGER DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -69,6 +71,10 @@ CREATE INDEX IF NOT EXISTS idx_contributions_public
 CREATE INDEX IF NOT EXISTS idx_laitan_gallery_order 
   ON laitan_gallery (display_order ASC);
 
+-- Index for pinned tributes ordering
+CREATE INDEX IF NOT EXISTS idx_contributions_pinned
+  ON contributions (is_pinned DESC, pin_order ASC NULLS LAST);
+
 -- Position is the primary key, so no extra index is needed for laitan_years_slots
 
 -- ============================================
@@ -76,6 +82,8 @@ CREATE INDEX IF NOT EXISTS idx_laitan_gallery_order
 -- ============================================
 -- ALTER TABLE laitan_photos RENAME TO laitan_gallery;
 -- ALTER TABLE laitan_gallery ADD COLUMN IF NOT EXISTS media_type TEXT NOT NULL DEFAULT 'photo' CHECK (media_type IN ('photo', 'video'));
+-- ALTER TABLE contributions ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN NOT NULL DEFAULT false;
+-- ALTER TABLE contributions ADD COLUMN IF NOT EXISTS pin_order INTEGER DEFAULT NULL;
 
 -- ============================================
 -- Storage Buckets (run in Supabase Dashboard)

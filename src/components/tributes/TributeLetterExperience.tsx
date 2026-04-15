@@ -89,9 +89,15 @@ export default function TributeLetterExperience({
             key={tribute.id}
             type="button"
             onClick={() => setSelectedTribute(tribute)}
-            className="group relative flex flex-col overflow-hidden rounded-[16px] bg-white text-left shadow-[0_4px_20px_rgba(45,16,72,0.08)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_8px_30px_rgba(201,168,76,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]/60"
+            className={`group relative flex flex-col overflow-hidden rounded-[16px] text-left shadow-[0_4px_20px_rgba(45,16,72,0.08)] transition-all duration-300 hover:-translate-y-[6px] hover:shadow-[0_8px_30px_rgba(201,168,76,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]/60 ${tribute.is_pinned ? "bg-rose-50 ring-2 ring-rose-200/60" : "bg-white"}`}
             style={{ height: "280px" }}
           >
+            {/* Pinned badge */}
+            {tribute.is_pinned && (
+              <div className="absolute top-2 right-2 z-20 bg-rose-100 text-rose-500 rounded-full p-1.5 shadow-sm" title="Pinned tribute">
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6h2v-6h5v-2l-2-2z"/></svg>
+              </div>
+            )}
             {/* Envelope flap — pink-to-blush chevron */}
             <div className="relative shrink-0" style={{ height: "88px", zIndex: 10 }}>
               {/* Flap chevron — the blush inverted-V pointing down */}

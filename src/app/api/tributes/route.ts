@@ -22,6 +22,8 @@ export async function GET(req: NextRequest) {
       .from("contributions")
       .select("*")
       .eq("is_deleted", false)
+      .order("is_pinned", { ascending: false })
+      .order("pin_order", { ascending: true, nullsFirst: false })
       .order("created_at", { ascending: false });
 
     if (type && ["text", "photo", "video"].includes(type)) {

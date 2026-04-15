@@ -12,6 +12,8 @@ export interface Contribution {
   asset_size_bytes: number | null;
   video_duration_seconds: number | null;
   is_deleted: boolean;
+  is_pinned: boolean;
+  pin_order: number | null;
   created_at: string;
 }
 

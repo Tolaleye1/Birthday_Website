@@ -106,6 +106,7 @@ export default function UploadVideoPage() {
           mimeType: file.type,
           fileSize: file.size,
           durationSeconds: duration,
+          fileName: file.name,
         }),
       });
 
