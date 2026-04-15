@@ -4,7 +4,7 @@ export default function BiographySection() {
   return (
     <section id="biography" className="py-16 md:py-24 px-4">
       <div className="max-w-3xl mx-auto text-center">
-        <p className="font-[family-name:var(--font-script)] text-gold text-2xl mb-4">
+        <p className="font-[family-name:var(--font-script)] text-gold text-4xl md:text-5xl mb-4">
           50 Years of Grace
         </p>
         <h2 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl font-bold text-text-dark mb-6">

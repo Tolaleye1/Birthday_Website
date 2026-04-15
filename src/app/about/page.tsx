@@ -8,7 +8,7 @@ export default function AboutPage() {
       <Navbar />
       <main>
         <section className="gradient-hero pt-24 pb-12 md:pt-32 md:pb-16 px-4 text-center relative">
-          <p className="text-gold-light uppercase tracking-[0.2em] text-xs font-semibold mb-3">50 Years of Grace</p>
+          <p className="text-gold-light uppercase tracking-[0.2em] text-lg md:text-xl font-semibold mb-1">50 Years of Grace</p>
           <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-5xl font-bold text-white mb-3">About Olakiitan</h1>
           <p className="text-white/60 max-w-md mx-auto">A Life of Faith, Service, and Impact</p>
           <div className="absolute bottom-0 left-0 right-0"><svg viewBox="0 0 1440 40" fill="none"><path d="M0 40V20C360 0 720 0 1080 20C1260 30 1380 35 1440 38V40H0Z" fill="#FFF8F0" /></svg></div>
