@@ -33,6 +33,14 @@ export default function AdminPage() {
   const [yearSlotCompressing, setYearSlotCompressing] = useState<Record<number, boolean>>({});
   const [draggedPinnedId, setDraggedPinnedId] = useState<string | null>(null);
 
+  // ─── Edit Modal State ───
+  const [editingTribute, setEditingTribute] = useState<Contribution | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editMessage, setEditMessage] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editToast, setEditToast] = useState(false);
+
   // ─── Visibility Controls ───
   const [visibility, setVisibility] = useState<VisibilitySettings>({
     tributes_visible: false,
@@ -162,6 +170,65 @@ export default function AdminPage() {
       cancelled = true;
     };
   }, []);
+
+  const openEditModal = (tribute: Contribution) => {
+    setEditingTribute(tribute);
+    setEditName(tribute.submitter_name);
+    setEditMessage(tribute.message || "");
+    setEditError("");
+  };
+
+  const closeEditModal = () => {
+    setEditingTribute(null);
+    setEditName("");
+    setEditMessage("");
+    setEditError("");
+    setEditSaving(false);
+  };
+
+  const handleEditSave = async () => {
+    if (!editingTribute) return;
+    if (!editName.trim()) { setEditError("Name is required."); return; }
+    if (!editMessage.trim()) { setEditError("Message is required."); return; }
+
+    setEditSaving(true);
+    setEditError("");
+
+    try {
+      const res = await fetch(`/api/tributes/${editingTribute.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submitterName: editName.trim(), message: editMessage.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setEditError(data.error || "Failed to update.");
+        setEditSaving(false);
+        return;
+      }
+
+      // Optimistic update in the local list
+      setContributions((prev) =>
+        prev.map((c) =>
+          c.id === editingTribute.id
+            ? { ...c, submitter_name: editName.trim(), message: editMessage.trim() }
+            : c
+        )
+      );
+
+      closeEditModal();
+
+      // Show success toast
+      setEditToast(true);
+      setTimeout(() => setEditToast(false), 3000);
+    } catch {
+      setEditError("Something went wrong.");
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this submission?")) return;
@@ -554,6 +621,14 @@ export default function AdminPage() {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15.75 10.5V5.75A1.75 1.75 0 0014 4H9.5a1.75 1.75 0 00-1.75 1.75v4.75L5.5 13v1h5.5v7h2v-7h5.5v-1l-2.75-2.5Z" />
                                 </svg>
                               </button>
+                              {c.type === "text" && (
+                                <button onClick={() => openEditModal(c)}
+                                  className="text-text-muted hover:text-purple-primary transition-colors" title="Edit tribute">
+                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                  </svg>
+                                </button>
+                              )}
                               <button onClick={() => handleDelete(c.id)} disabled={deleting === c.id}
                                 className="text-red-500 hover:text-red-700 text-xs font-medium transition-colors disabled:opacity-50">
                                 {deleting === c.id ? "Deleting..." : "Delete"}
@@ -689,6 +764,82 @@ export default function AdminPage() {
           </div>
         </section>
       </main>
+      {/* ─── Edit Tribute Modal ─── */}
+      {editingTribute && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center px-4" onClick={closeEditModal}>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div
+            className="relative z-10 w-full max-w-[560px] bg-white rounded-2xl shadow-2xl p-6 md:p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="font-[family-name:var(--font-display)] text-xl font-bold text-text-dark mb-6">Edit Tribute</h2>
+
+            <div className="space-y-5">
+              <div>
+                <label htmlFor="edit-name" className="block text-sm font-semibold text-text-dark mb-2">Name</label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-text-body placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="edit-message" className="block text-sm font-semibold text-text-dark mb-2">Message</label>
+                <textarea
+                  id="edit-message"
+                  rows={6}
+                  value={editMessage}
+                  onChange={(e) => setEditMessage(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-gold-light/60 bg-ivory text-text-body placeholder:text-text-muted/50 focus:outline-none focus:border-purple-primary focus:ring-2 focus:ring-purple-primary/20 transition-all resize-y"
+                />
+              </div>
+
+              {editError && (
+                <div className="bg-red-50 text-red-700 rounded-xl p-3 text-sm">{editError}</div>
+              )}
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => void handleEditSave()}
+                  disabled={editSaving}
+                  className="flex-1 bg-gold hover:bg-gold/90 text-purple-deep font-semibold py-3 rounded-[var(--radius-pill)] shadow-[var(--shadow-glow)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {editSaving && (
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  )}
+                  {editSaving ? "Saving..." : "Save Changes"}
+                </button>
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  disabled={editSaving}
+                  className="flex-1 border-2 border-purple-primary text-purple-primary hover:bg-purple-primary hover:text-white font-semibold py-3 rounded-[var(--radius-pill)] transition-all disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Success Toast ─── */}
+      {editToast && (
+        <div className="fixed bottom-6 right-6 z-[80] bg-green-600 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-2 animate-[fadeInUp_0.3s_ease-out]">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.5 12.75l6 6 9-13.5" />
+          </svg>
+          Tribute updated
+        </div>
+      )}
+
       <Footer />
     </>
   );
