@@ -26,12 +26,12 @@ export default function UploadVideoPage() {
       setError("Please select a valid video file (MP4, MOV, or WebM).");
       return;
     }
-    if (f.size > 50 * 1024 * 1024) {
-      setError("This video is too large. Please use a shorter or lower quality clip (max 50MB).");
+    if (f.size > 100 * 1024 * 1024) {
+      setError("This video is too large. Please use a shorter or lower quality clip (max 100MB).");
       return;
     }
     if (f.size > MAX_VIDEO_SIZE_BYTES) {
-      setError("Video must be under 50 MB.");
+      setError("Video must be under 100 MB.");
       return;
     }
 
@@ -41,7 +41,7 @@ export default function UploadVideoPage() {
     video.onloadedmetadata = () => {
       window.URL.revokeObjectURL(video.src);
       if (video.duration > MAX_VIDEO_DURATION_SECONDS) {
-        setError(`Video is ${Math.ceil(video.duration)} seconds. Maximum is 90 seconds.`);
+        setError(`Video is ${Math.ceil(video.duration)} seconds. Maximum is 180 seconds (3 minutes).`);
         setFile(null);
         setDuration(null);
         return;
@@ -224,7 +224,7 @@ export default function UploadVideoPage() {
                     ) : (
                       <>
                         <p className="font-semibold text-text-dark mb-1">Click or tap to select your video</p>
-                        <p className="text-sm text-text-muted">MP4 or MOV, up to 50MB</p>
+                        <p className="text-sm text-text-muted">MP4 or MOV, up to 100MB</p>
                       </>
                     )}
                     <input
@@ -243,7 +243,7 @@ export default function UploadVideoPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <p className="text-sm font-semibold text-text-dark">Maximum 1 minute 30 seconds</p>
+                    <p className="text-sm font-semibold text-text-dark">Maximum 3 minutes</p>
                     <p className="text-xs text-text-muted mt-0.5">Videos exceeding the time limit will not be accepted. Keep your message warm and personal!</p>
                   </div>
                 </div>
@@ -285,7 +285,7 @@ export default function UploadVideoPage() {
                 Tips for a Great Video
               </h3>
               <ul className="space-y-3 text-sm text-text-body">
-                {["Find a quiet, well-lit spot for recording", "Hold your phone horizontally for the best viewing experience", "Start with a smile and speak clearly", "Keep it personal and heartfelt", "Stay within the 90-second limit"].map((tip) => (
+                {["Find a quiet, well-lit spot for recording", "Hold your phone horizontally for the best viewing experience", "Start with a smile and speak clearly", "Keep it personal and heartfelt", "Stay within the 3-minute limit"].map((tip) => (
                   <li key={tip} className="flex items-start gap-2">
                     <span className="text-gold mt-0.5">✓</span>
                     <span>{tip}</span>

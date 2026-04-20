@@ -65,7 +65,7 @@ export default function ParticipateSection() {
               Record a Video
             </h3>
             <p className="text-text-muted text-sm leading-relaxed">
-              Record a personal video greeting up to 90 seconds that will live in the celebration gallery.
+              Record a personal video greeting up to 3 minutes that will live in the celebration gallery.
             </p>
           </Link>
         </div>

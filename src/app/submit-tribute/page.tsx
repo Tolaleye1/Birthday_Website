@@ -38,14 +38,14 @@ export default function SubmitTributePage() {
       setFile(f);
     } else if (tab === "video") {
       if (!ALLOWED_VIDEO_TYPES.includes(f.type)) { setError("Please select a valid video (MP4, MOV, or WebM)."); return; }
-      if (f.size > 50 * 1024 * 1024) { setError("This video is too large. Please use a shorter or lower quality clip (max 50MB)."); return; }
-      if (f.size > MAX_VIDEO_SIZE_BYTES) { setError("Video must be under 50 MB."); return; }
+      if (f.size > 100 * 1024 * 1024) { setError("This video is too large. Please use a shorter or lower quality clip (max 100MB)."); return; }
+      if (f.size > MAX_VIDEO_SIZE_BYTES) { setError("Video must be under 100 MB."); return; }
       const video = document.createElement("video");
       video.preload = "metadata";
       video.onloadedmetadata = () => {
         window.URL.revokeObjectURL(video.src);
         if (video.duration > MAX_VIDEO_DURATION_SECONDS) {
-          setError(`Video is ${Math.ceil(video.duration)}s. Maximum is 90s.`); setFile(null); return;
+          setError(`Video is ${Math.ceil(video.duration)}s. Maximum is 180s (3 minutes).`); setFile(null); return;
         }
         setDuration(Math.ceil(video.duration));
         setFile(f);
@@ -221,7 +221,7 @@ export default function SubmitTributePage() {
                         ) : (
                           <>
                             <p className="font-semibold text-text-dark mb-1">Click to select your {tab}</p>
-                            <p className="text-sm text-text-muted">{tab === "photo" ? "JPEG, PNG, WebP • up to 10MB" : "MP4/MOV • up to 50MB • max 90s"}</p>
+                            <p className="text-sm text-text-muted">{tab === "photo" ? "JPEG, PNG, WebP • up to 10MB" : "MP4/MOV • up to 100MB • max 3 min"}</p>
                           </>
                         )}
                         <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange}
