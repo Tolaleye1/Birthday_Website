@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function EventDetailsSection() {
   return (
     <section className="gradient-hero py-12 md:py-16 px-4 relative">
@@ -47,10 +49,12 @@ export default function EventDetailsSection() {
         </div>
 
         <div className="text-center mt-8">
-          <p className="text-white/60 text-sm">
-            Dress Code: Touch of <span className="text-gold font-semibold">Gold</span> or{" "}
-            <span className="text-orchid font-semibold">Purple</span>
-          </p>
+          <Link
+            href="/event"
+            className="text-gold text-sm font-semibold hover:text-gold-light transition-colors"
+          >
+            See full event details →
+          </Link>
         </div>
       </div>
     </section>
