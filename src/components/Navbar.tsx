@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/event", label: "Event" },
   { href: "/about", label: "About Olakiitan" },
   { href: "/gift", label: "Gift the Celebrant" },
   { href: "/gallery", label: "Gallery" },
@@ -70,6 +71,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-white/10 px-4 pb-4">
           <Link href="/" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Home</Link>
+          <Link href="/event" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Event</Link>
           <Link href="/about" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>About Olakiitan</Link>
           <Link href="/gift" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Gift the Celebrant</Link>
           <Link href="/submit-tribute" className="block py-3 text-white/80 font-medium border-b border-white/10" onClick={() => setMobileOpen(false)}>Send a Tribute</Link>
